@@ -1,0 +1,36 @@
+.course-detail-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.course-detail-modal {
+  background: #fff;
+  padding: 24px;
+  max-width: 600px;
+  width: 90%;
+  border-radius: 8px;
+  position: relative;
+}
+
+.course-detail-modal img {
+  width: 100%;
+  border-radius: 6px;
+  margin: 12px 0;
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
