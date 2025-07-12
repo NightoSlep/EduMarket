@@ -8,6 +8,13 @@
   border-radius: 50%;
   background-color: white;
   overflow: hidden;
+  cursor: pointer;  
+}
+
+.search-wrapper:hover {
+  background-color: #e6e6ff;
+  border: 1px solid #6200ee;
+  border-radius: 50%;
 }
 
 .search-wrapper.expanded {

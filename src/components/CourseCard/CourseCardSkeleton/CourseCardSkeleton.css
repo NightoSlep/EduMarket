@@ -1,0 +1,61 @@
+.course-card.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 16px;
+  width: 260px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  gap: 10px; /* thêm để tránh dùng margin rườm rà */
+}
+
+.skeleton-card {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-image,
+.skeleton-title,
+.skeleton-price,
+.skeleton-button {
+  background-color: #e0e0e0;
+  border-radius: 6px;
+}
+
+/* giữ nguyên */
+.skeleton-image {
+  height: 150px;
+  width: 100%;
+}
+
+/* giữ nguyên */
+.skeleton-title {
+  height: 40px;
+  width: 100%;
+}
+
+/* chỉ căn giữa chứ không ảnh hưởng flow */
+.skeleton-price {
+  height: 20px;
+  max-width: 60%;
+  align-self: center;
+}
+
+/* ✅ KHẮC PHỤC ở đây */
+.skeleton-button {
+  flex-grow: 1; /* hoặc flex: 1 0 auto; */
+  height: 32px;
+  width: 100%;
+  align-self: stretch;
+  background-color: #e0e0e0;
+}
+
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}

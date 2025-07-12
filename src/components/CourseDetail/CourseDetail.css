@@ -1,36 +1,194 @@
-.course-detail-overlay {
+.modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 999;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+  overflow-y: auto;
 }
 
-.course-detail-modal {
-  background: #fff;
-  padding: 24px;
-  max-width: 600px;
-  width: 90%;
-  border-radius: 8px;
+.course-modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 1000px;
+  width: 100%;
+  max-height: 90vh;         
+  overflow-y: auto;   
   position: relative;
 }
 
-.course-detail-modal img {
-  width: 100%;
-  border-radius: 6px;
-  margin: 12px 0;
+.course-modal::-webkit-scrollbar {
+  width: 10px;
+}
+
+.course-modal::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 12px;
+}
+
+.course-modal::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 12px;
+  border: 2px solid #f1f1f1;
+}
+
+.course-modal::-webkit-scrollbar-thumb:hover {
+  background-color: #aaa;
+}
+
+.close-wrapper {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  z-index: 1000;
 }
 
 .close-btn {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  font-size: 24px;
-  background: transparent;
+  background: white;
   border: none;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 50%;
+  width: 28px; 
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+  color: #555;
+  transition: background-color 0.2s ease;
+}
+
+.close-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.course-detail-container {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.course-detail-image {
+  flex: 1;
+  width: 75%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.course-detail-info {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.course-detail-info .price {
+  color: green;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.likes-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.like-btn {
+  padding: 6px 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+.like-btn:hover {
+  background-color: #ffeef0;
+  border-color: #ffccd5;
+}
+
+.like-count {
+  font-weight: bold;
+  color: #d10000;
+}
+
+.enroll-btn {
+  padding: 10px 16px;
+  font-size: 16px;
+  background-color: #6a00ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reviews-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.review {
+  background: #f9f9f9;
+  border-left: 4px solid #6a00ff;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.add-review {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.review-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 14px;
+}
+
+.submit-review-btn {
+  align-self: flex-end;
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.submit-review-btn:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 600px) {
+  .close-wrapper {
+    top: 6px;
+    right: 6px;
+  }
+
+  .close-btn {
+    font-size: 20px;
+    padding: 4px 8px;
+  }
+
+  .course-modal {
+    padding: 10px;
+  }
+
+  .course-detail-image {
+    width: 100%;
+  }
 }

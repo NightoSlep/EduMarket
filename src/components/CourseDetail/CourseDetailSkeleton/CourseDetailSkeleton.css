@@ -1,0 +1,105 @@
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.course-detail-container {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.course-detail-image.skeleton-image {
+  flex: 1;
+  width: 100%;
+  min-width: 700px;
+  height: 400px; 
+  background: #ddd;
+  border-radius: 8px;
+  animation: pulse 1.5s infinite ease-in-out;
+  object-fit: cover;
+}
+
+.course-detail-info.skeleton-info {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-line {
+  height: 16px;
+  width: 100%;
+  background-color: #ddd;
+  border-radius: 6px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-short {
+  width: 60%;
+}
+
+.skeleton-title {
+  height: 20px;
+  width: 80%;
+}
+
+.skeleton-review-title {
+  width: 200px;
+}
+
+.skeleton-button {
+  height: 36px;
+  width: 140px;
+  background-color: #ccc;
+  border-radius: 6px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.enroll-placeholder {
+  margin-top: 10px;
+}
+
+.skeleton-submit-btn {
+  align-self: flex-end;
+  width: 120px;
+  margin-top: 10px;
+}
+
+.skeleton-review {
+  height: 50px;
+  background: #eee;
+  border-radius: 6px;
+  margin: 10px 0;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-textarea {
+  height: 80px;
+  background: #ddd;
+  border-radius: 6px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #ddd;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@media (max-width: 600px) {
+  .course-detail-image.skeleton-image {
+    width: 100%;
+  }
+
+  .course-detail-container {
+    flex-direction: column;
+  }
+
+  .course-detail-info.skeleton-info {
+    width: 100%;
+  }
+}

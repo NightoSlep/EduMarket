@@ -1,6 +1,8 @@
 .course-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
+  gap: 24px;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 20px;
 }

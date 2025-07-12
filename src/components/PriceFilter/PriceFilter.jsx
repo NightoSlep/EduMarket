@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MdPriceChange } from 'react-icons/md';
+import { FaChevronDown } from 'react-icons/fa';
 import './PriceFilter.css';
 
 export default function PriceFilter({ value, onChange }) {
@@ -10,8 +10,8 @@ export default function PriceFilter({ value, onChange }) {
     setOpen(prev => !prev);
   };
 
-  const handleOptionClick = (newValue) => {
-    onChange(newValue);
+  const handleOptionChange = (e) => {
+    onChange(e.target.value);
     setOpen(false);
   };
 
@@ -27,36 +27,51 @@ export default function PriceFilter({ value, onChange }) {
 
   return (
     <div className="price-filter-wrapper" ref={ref}>
-      <button className="filter-icon-btn" onClick={toggleDropdown}>
-        <MdPriceChange size={20} />
+      <button className="price-button" onClick={toggleDropdown}>
+        Giá <FaChevronDown className="chevron-icon" />
       </button>
 
-      {/* Luôn render dropdown */}
       <div className={`price-dropdown ${open ? 'open' : ''}`}>
-        <div
-          onClick={() => handleOptionClick('all')}
-          className={`price-option ${value === 'all' ? 'selected' : ''}`}
-        >
-          Tất cả
-        </div>
-        <div
-          onClick={() => handleOptionClick('low')}
-          className={`price-option ${value === 'low' ? 'selected' : ''}`}
-        >
-          Dưới 500,000 VND
-        </div>
-        <div
-          onClick={() => handleOptionClick('mid')}
-          className={`price-option ${value === 'mid' ? 'selected' : ''}`}
-        >
-          500,000 – 1,000,000 VND
-        </div>
-        <div
-          onClick={() => handleOptionClick('high')}
-          className={`price-option ${value === 'high' ? 'selected' : ''}`}
-        >
-          Trên 1,000,000 VND
-        </div>
+        <label className="price-option">
+          <input
+            type="radio"
+            name="price"
+            value="all"
+            checked={value === 'all'}
+            onChange={handleOptionChange}
+          />
+          <span>Tất cả</span>
+        </label>
+        <label className="price-option">
+          <input
+            type="radio"
+            name="price"
+            value="low"
+            checked={value === 'low'}
+            onChange={handleOptionChange}
+          />
+          <span>Dưới 500.000 VND</span>
+        </label>
+        <label className="price-option">
+          <input
+            type="radio"
+            name="price"
+            value="mid"
+            checked={value === 'mid'}
+            onChange={handleOptionChange}
+          />
+          <span>500.000 – 1.000.000 VND</span>
+        </label>
+        <label className="price-option">
+          <input
+            type="radio"
+            name="price"
+            value="high"
+            checked={value === 'high'}
+            onChange={handleOptionChange}
+          />
+          <span>Trên 1.000.000 VND</span>
+        </label>
       </div>
     </div>
   );

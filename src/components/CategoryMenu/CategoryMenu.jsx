@@ -1,40 +1,24 @@
-import React, { useState } from "react";
-import { getCategoryMap } from "../../utils/CategoryUtil";
-import { courses } from "../../data/course";
-import { FaChevronRight } from "react-icons/fa";
-import "./CategoryMenu.css";
+import React from 'react';
+import { getCategoryMap } from '../../utils/CategoryUtil';
+import { courses } from '../../data/course';
+import './CategoryMenu.css';
 
-export default function CategoryMenu({ onSelect }) {
+export default function CategoryMenu({ category, onSelect }) {
   const categories = getCategoryMap(courses);
-  const [hovered, setHovered] = useState(null);
+  const selected = categories.find((c) => c.category === category);
+
+  if (!selected) return null;
 
   return (
     <div className="category-dropdown">
-      <ul className="category-list">
-        {categories.map(({ category, subcategories }) => (
+      <ul className="subcategory-list vertical">
+        {selected.subcategories.map((sub) => (
           <li
-            key={category}
-            className="category-item"
-            onMouseEnter={() => setHovered(category)}
-            onClick={() => setHovered(hovered === category ? null : category)}
+            key={sub}
+            className="subcategory-item"
+            onClick={() => onSelect(category, sub)}
           >
-            <span className="category-name">
-              {category} <FaChevronRight className="chevron-icon" />
-            </span>
-            
-            {hovered === category && (
-              <ul className="subcategory-list">
-                {subcategories.map((sub) => (
-                  <li
-                    key={sub}
-                    className="subcategory-item"
-                    onClick={() => onSelect(category, sub)}
-                  >
-                    {sub}
-                  </li>
-                ))}
-              </ul>
-            )}
+            {sub}
           </li>
         ))}
       </ul>
