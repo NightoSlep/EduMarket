@@ -14,7 +14,11 @@ export default function useResponsiveMenu() {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (navRef.current && !navRef.current.contains(e.target)) {
+      if (
+        navRef.current &&
+        !navRef.current.contains(e.target) &&
+        !e.target.closest('.menu-toggle')
+      ) {
         setMenuOpen(false);
         setExpandedCategory(null);
       }
@@ -33,5 +37,6 @@ export default function useResponsiveMenu() {
     expandedCategory,
     toggleCategory,
     navRef,
+    setExpandedCategory,
   };
 }

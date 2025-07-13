@@ -5,8 +5,8 @@ export const courses = [
     price: 520000,
     image: "/assets/react.png",
     description: "Xây dựng ứng dụng thực tế với React.",
-    category: "Khóa học",
-    subcategory: "Lập trình",
+    categoryId: 1,
+    subcategoryId: 1,     // Lập trình (khóa học)
     likes: 128
   },
   {
@@ -15,8 +15,8 @@ export const courses = [
     price: 560000,
     image: "/assets/uiux.png",
     description: "Tư duy và công cụ thiết kế giao diện người dùng.",
-    category: "Khóa học",
-    subcategory: "Thiết kế đồ họa",
+    categoryId: 1,
+    subcategoryId: 2,     // Thiết kế đồ họa (khóa học)
     likes: 96
   },
   {
@@ -25,8 +25,8 @@ export const courses = [
     price: 490000,
     image: "/assets/english.png",
     description: "Tự tin giao tiếp tiếng Anh chỉ sau 4 tuần.",
-    category: "Khóa học",
-    subcategory: "Ngoại ngữ",
+    categoryId: 1,
+    subcategoryId: 3,     // Ngoại ngữ (khóa học)
     likes: 142
   },
   {
@@ -35,8 +35,8 @@ export const courses = [
     price: 670000,
     image: "/assets/java.png",
     description: "Học Java thông qua thực hành ứng dụng.",
-    category: "Khóa học",
-    subcategory: "Lập trình",
+    categoryId: 1,
+    subcategoryId: 1,     // Lập trình (khóa học)
     likes: 110
   },
   {
@@ -45,8 +45,8 @@ export const courses = [
     price: 1150000,
     image: "/assets/ml.jpg",
     description: "Lý thuyết và bài tập về Machine Learning.",
-    category: "Tài liệu",
-    subcategory: "Lập trình",
+    categoryId: 2,  
+    subcategoryId: 4,      // Lập trình (tài liệu)
     likes: 89
   },
   {
@@ -55,8 +55,8 @@ export const courses = [
     price: 580000,
     image: "/assets/poster.jpg",
     description: "Học bố cục, màu sắc, font chữ qua bài mẫu.",
-    category: "Tài liệu",
-    subcategory: "Thiết kế đồ họa",
+    categoryId: 2,
+    subcategoryId: 5,     // Thiết kế đồ họa (tài liệu)
     likes: 74
   },
   {
@@ -65,8 +65,8 @@ export const courses = [
     price: 460000,
     image: "/assets/toeic.jpg",
     description: "Ngữ pháp, từ vựng, đề luyện tập thực tế.",
-    category: "Tài liệu",
-    subcategory: "Ngoại ngữ",
+    categoryId: 2,
+    subcategoryId: 6,     // Ngoại ngữ (tài liệu)
     likes: 120
   },
   {
@@ -75,8 +75,8 @@ export const courses = [
     price: 1020000,
     image: "/assets/algorithm.png",
     description: "Tư duy giải thuật, đệ quy, sắp xếp,...",
-    category: "Tài liệu",
-    subcategory: "Lập trình",
+    categoryId: 2,
+    subcategoryId: 4,     // Lập trình (tài liệu)
     likes: 132
   },
   {
@@ -85,8 +85,8 @@ export const courses = [
     price: 890000,
     image: "/assets/doc-react.png",
     description: "PDF + link demo thực hành React.",
-    category: "Tài liệu",
-    subcategory: "Lập trình",
+    categoryId: 2,
+    subcategoryId: 4,     // Lập trình (tài liệu)
     likes: 155
   },
   {
@@ -95,8 +95,8 @@ export const courses = [
     price: 340000,
     image: "/assets/illustrator.jpg",
     description: "Cách vẽ logo, icon, poster sáng tạo.",
-    category: "Tài liệu",
-    subcategory: "Thiết kế đồ họa",
+    categoryId: 2,
+    subcategoryId: 5,     // Thiết kế đồ họa (tài liệu)
     likes: 70
   },
   {
@@ -105,8 +105,8 @@ export const courses = [
     price: 650000,
     image: "/assets/ielts.jpg",
     description: "Thực hành nghe theo chuẩn đề thi thật.",
-    category: "Tài liệu",
-    subcategory: "Ngoại ngữ",
+    categoryId: 2,
+    subcategoryId: 6,     // Ngoại ngữ (tài liệu)
     likes: 103
   },
   {
@@ -115,8 +115,8 @@ export const courses = [
     price: 1080000,
     image: "/assets/cpp.png",
     description: "Tài liệu ôn luyện giải thuật C++ nâng cao.",
-    category: "Tài liệu",
-    subcategory: "Lập trình",
+    categoryId: 2,
+    subcategoryId: 4,     // Lập trình (tài liệu)
     likes: 117
   }
 ];

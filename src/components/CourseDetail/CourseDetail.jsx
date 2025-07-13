@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import './CourseDetail.css';
 import CourseDetailSkeleton from './CourseDetailSkeleton/CourseDetailSkeleton';
+import { categories } from '../../data/categories';
+import { subcategories } from '../../data/subcategories';
 
 export default function CourseDetail({ course, isLoading, onClose }) {
   const [likes, setLikes] = useState(course.likes || 0);
@@ -16,7 +18,6 @@ export default function CourseDetail({ course, isLoading, onClose }) {
       alert('❗ Vui lòng nhập nội dung đánh giá.');
       return;
     }
-    alert('✅ Đánh giá của bạn: ' + trimmed);
     setReviewText('');
   };
 
@@ -30,9 +31,10 @@ export default function CourseDetail({ course, isLoading, onClose }) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  if (isLoading) {
-    return <CourseDetailSkeleton />;
-  }
+  if (isLoading) return <CourseDetailSkeleton />;
+
+  const categoryName = categories.find((c) => c.id === course.categoryId)?.name || 'Không rõ';
+  const subcategoryName = subcategories.find((s) => s.id === course.subcategoryId)?.name || 'Không rõ';
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -47,7 +49,7 @@ export default function CourseDetail({ course, isLoading, onClose }) {
           <img src={course.image} alt={course.name} className="course-detail-image" />
           <div className="course-detail-info">
             <h2>{course.name}</h2>
-            <p><strong>Danh mục:</strong> {course.category} - {course.subcategory || 'Không rõ'}</p>
+            <p><strong>Danh mục:</strong> {categoryName} - {subcategoryName}</p>
             <p><strong>Mô tả:</strong> {course.description}</p>
             <p className="price">{course.price.toLocaleString()} VND</p>
             <div className="likes-section">
@@ -55,7 +57,7 @@ export default function CourseDetail({ course, isLoading, onClose }) {
               <span className="like-count">{likes} lượt thích</span>
             </div>
             <button className="enroll-btn">
-              {course.category === 'Khóa học' ? 'Đăng ký học' : 'Mua tài liệu'}
+              {categoryName === 'Khóa học' ? 'Đăng ký học' : 'Mua tài liệu'}
             </button>
           </div>
         </div>

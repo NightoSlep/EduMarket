@@ -1,24 +1,27 @@
+// src/components/CategoryMenu/CategoryMenu.jsx
 import React from 'react';
-import { getCategoryMap } from '../../utils/CategoryUtil';
-import { courses } from '../../data/course';
+import { categories } from '../../data/categories';
+import { subcategories } from '../../data/subcategories';
 import './CategoryMenu.css';
 
-export default function CategoryMenu({ category, onSelect }) {
-  const categories = getCategoryMap(courses);
-  const selected = categories.find((c) => c.category === category);
+export default function CategoryMenu({ categoryId, onSelect, isOpen }) {
+  const selectedCategory = categories.find((c) => c.id === categoryId);
+  if (!selectedCategory) return null;
 
-  if (!selected) return null;
+  const relatedSubcategories = subcategories.filter(
+    (sub) => sub.categoryId === categoryId
+  );
 
   return (
-    <div className="category-dropdown">
+    <div className={`category-dropdown ${isOpen ? 'open' : ''}`}>
       <ul className="subcategory-list vertical">
-        {selected.subcategories.map((sub) => (
+        {relatedSubcategories.map((sub) => (
           <li
-            key={sub}
+            key={sub.id}
             className="subcategory-item"
-            onClick={() => onSelect(category, sub)}
+            onClick={() => onSelect(categoryId, sub.id)}
           >
-            {sub}
+            {sub.name}
           </li>
         ))}
       </ul>

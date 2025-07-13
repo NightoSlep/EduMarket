@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
 import './App.css';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { categories } from './data/categories';
+import { subcategories } from './data/subcategories';
 import Header from './components/Header/Header';
 import PriceFilter from './components/PriceFilter/PriceFilter';
 import CourseList from './components/CourseList/CourseList';
@@ -29,8 +31,10 @@ export default function App() {
   }, [selectedCourse]);
 
   const renderTitle = () => {
-    if (categoryFilter && subcategoryFilter) return `${categoryFilter} - ${subcategoryFilter}`;
-    if (subcategoryFilter) return subcategoryFilter;
+    const category = categories.find(c => c.id === categoryFilter);
+    const subcategory = subcategories.find(sc => sc.id === subcategoryFilter);
+    if (category && subcategory) return `${category.name} - ${subcategory.name}`;
+    if (subcategory) return subcategory.name;
     return 'Khóa học & Tài liệu';
   };
 
