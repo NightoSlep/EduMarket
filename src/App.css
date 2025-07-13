@@ -6,9 +6,14 @@
 
 main {
   flex-grow: 1;
-  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   width: 100%;
+}
+
+.content-wrapper {
+  max-width: 95%;
+  margin: 0 auto;
 }
 
 .search-filter-row {

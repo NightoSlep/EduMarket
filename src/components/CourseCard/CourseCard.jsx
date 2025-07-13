@@ -7,7 +7,7 @@ export default function CourseCard({ course, onSelectCourse }) {
       <img src={course.image} alt={course.name} className="course-image" />
       <h3>{course.name}</h3>
       <p className="price">{course.price.toLocaleString()} VND</p>
-      <button className="detail-btn" onClick={() => onSelectCourse(course)}>
+      <button className="detail-btn">
         Xem chi tiết
       </button>
     </div>

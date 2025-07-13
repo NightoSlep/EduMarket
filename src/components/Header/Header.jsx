@@ -1,13 +1,20 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { FaBars, FaLightbulb } from 'react-icons/fa';
+import { fetchCategories } from '../../api/categories';
 import useResponsiveMenu from '../../hooks/useResponsiveMenu';
 import CategoryMenu from '../CategoryMenu/CategoryMenu';
-import { categories } from '../../data/categories';
+import LoginModal from '../LoginModal/LoginModal';
 import './Header.css';
 
 export default function Header({ onCategorySelect, onResetFilters }) {
-  const navigate = useNavigate(); 
+  const [showLogin, setShowLogin] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem("loggedInUser");
+    return stored ? JSON.parse(stored) : null;
+  });
+
   const {
     isMobile,
     menuOpen,
@@ -18,23 +25,50 @@ export default function Header({ onCategorySelect, onResetFilters }) {
     setExpandedCategory,
   } = useResponsiveMenu();
 
+  useEffect(() => {
+    fetchCategories().then(setCategories).catch((err) => {
+      console.error("Lỗi tải categories:", err);
+    });
+  }, []);
+
   const handleLogoClick = () => {
     onResetFilters();
     window.scrollTo(0, 0);
   };
 
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("loggedInUser");
+    setUser(null);
+    setMenuOpen(false);
+    setExpandedCategory(null);
+  };
+
   const renderDesktopNav = () => (
     <>
       {categories.map((cat) => (
-<div key={cat.id} className="nav-item category-hover">
-  <span className="menu-item">{cat.name} ▾</span>
-  <div className="category-dropdown">
-    <CategoryMenu categoryId={cat.id} onSelect={onCategorySelect} />
-  </div>
-</div>
-
+        <div key={cat.id} className="nav-item category-hover">
+          <span className="menu-item">{cat.name} ▾</span>
+          <div className="category-dropdown">
+            <CategoryMenu categoryId={cat.id} onSelect={onCategorySelect} />
+          </div>
+        </div>
       ))}
-      <Link to="/about" className="menu-item">Về chúng tôi</Link>
+      <Link
+        to={user ? "/liked" : "#"}
+        className="menu-item liked-link"
+        onClick={(e) => {
+          if (!user) {
+            e.preventDefault();
+            alert("❗ Bạn cần đăng nhập để xem danh sách yêu thích!");
+          }
+        }}
+      >
+        ❤️ Yêu thích
+      </Link>
       <FaLightbulb className="lightbulb-icon desktop" title="Gợi ý thông minh!" />
     </>
   );
@@ -61,18 +95,37 @@ export default function Header({ onCategorySelect, onResetFilters }) {
           </div>
         </div>
       ))}
-
-      <Link 
-        to="/about" 
-        className="menu-item" 
-        onClick={() => {
-          setMenuOpen(false);
-          setExpandedCategory(null);
-          navigate('/about');
+      <Link
+        to={user ? "/liked" : "#"}
+        className="menu-item"
+        onClick={(e) => {
+          if (!user) {
+            e.preventDefault();
+            alert("❗ Bạn cần đăng nhập để xem danh sách yêu thích!");
+          } else {
+            setMenuOpen(false);
+            setExpandedCategory(null);
+          }
         }}
       >
-        Về chúng tôi
+        Yêu thích
       </Link>
+      {user ? (
+        <div className="menu-item logout-item" onClick={handleLogout}>
+          Đăng xuất
+        </div>
+      ) : (
+        <div
+          className="menu-item"
+          onClick={() => {
+            setShowLogin(true);
+            setMenuOpen(false);
+            setExpandedCategory(null);
+          }}
+        >
+          Đăng nhập
+        </div>
+      )}
     </>
   );
 
@@ -86,34 +139,68 @@ export default function Header({ onCategorySelect, onResetFilters }) {
           {isMobile && <FaLightbulb className="lightbulb-icon mobile" title="Gợi ý thông minh!" />}
         </div>
 
-        <button className="menu-toggle" onClick={() => {
-          const nextState = !menuOpen;
-          setMenuOpen(nextState);
-          if (!nextState) {
-            setExpandedCategory(null);
-          }
-        }}>
-          <FaBars size={22} />
-        </button>
+        <div className="right-controls">
+          {isMobile && user && (
+            <img
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6a0dad&color=fff&size=32`}
+              alt="avatar"
+              className="avatar mobile-avatar"
+            />
+          )}
+          <button
+            className="menu-toggle"
+            onClick={() => {
+              const nextState = !menuOpen;
+              setMenuOpen(nextState);
+              if (!nextState) {
+                setExpandedCategory(null);
+              }
+            }}
+          >
+            <FaBars size={22} />
+          </button>
+        </div>
 
         <nav ref={navRef} className={`navigation ${menuOpen ? 'open' : ''}`}>
           <div className="nav-left">
             {isMobile ? renderMobileNav() : renderDesktopNav()}
           </div>
-          <div className="nav-right">
-            <Link 
-              to="/login" 
-              className="menu-item login-tab"
-              onClick={() => {
-                setMenuOpen(false);
-                setExpandedCategory(null);
-              }}
-            >
-              Đăng nhập
-            </Link>
-          </div>
+
+          {!isMobile && (
+            <div className="nav-right">
+              {user ? (
+                <div className="user-info desktop-dropdown">
+                  <img
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6a0dad&color=fff&size=32`}
+                    alt="avatar"
+                    className="avatar"
+                  />
+                  <span className="user-name">{user.name}</span>
+                  <div className="user-dropdown">
+                    <div className="dropdown-item" onClick={handleLogout}>Đăng xuất</div>
+                  </div>
+                </div>
+              ) : (
+                <span
+                  className="menu-item login-tab"
+                  onClick={() => {
+                    setShowLogin(true);
+                    setMenuOpen(false);
+                    setExpandedCategory(null);
+                  }}
+                >
+                  Đăng nhập
+                </span>
+              )}
+            </div>
+          )}
         </nav>
       </div>
+      <LoginModal
+        isOpen={showLogin}
+        onClose={() => setShowLogin(false)}
+        onLoginSuccess={handleLoginSuccess}
+      />
     </header>
   );
 }

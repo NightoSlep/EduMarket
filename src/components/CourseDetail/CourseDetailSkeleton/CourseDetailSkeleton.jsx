@@ -15,6 +15,15 @@ export default function CourseDetailSkeleton() {
             <div className="skeleton-line skeleton-title" />
             <div className="skeleton-line" />
             <div className="skeleton-line" />
+            <div className="skeleton-line" />
+            <div className="skeleton-line" />
+            <div className="skeleton-line" />
+            <div className="skeleton-line" />
+            <div className="skeleton-line" />
+            <div className="skeleton-line" />
+            <div className="skeleton-line" />
+            <div className="skeleton-line" />
+            <div className="skeleton-line" />
             <div className="skeleton-line skeleton-short" />
             <div className="skeleton-button enroll-placeholder" />
           </div>

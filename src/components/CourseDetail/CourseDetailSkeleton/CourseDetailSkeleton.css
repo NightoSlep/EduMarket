@@ -51,9 +51,11 @@
 
 .skeleton-button {
   height: 36px;
-  width: 140px;
-  background-color: #ccc;
+  font-size: 16px;
+  background-color: #ddd;
+  border: none;
   border-radius: 6px;
+  cursor: pointer;
   animation: pulse 1.5s infinite ease-in-out;
 }
 
@@ -90,9 +92,9 @@
   animation: pulse 1.5s infinite ease-in-out;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .course-detail-image.skeleton-image {
-    width: 100%;
+    max-height: 200px;
   }
 
   .course-detail-container {

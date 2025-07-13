@@ -1,16 +1,51 @@
+import './CourseDetail.css';
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import './CourseDetail.css';
+import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
+import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
+import { fetchCategories } from '../../api/categories';
+import { fetchSubcategories } from '../../api/subcategories';
+import { likedCourses } from '../../data/likedCourses';
+import { ToastContainer, toast } from 'react-toastify';
 import CourseDetailSkeleton from './CourseDetailSkeleton/CourseDetailSkeleton';
-import { categories } from '../../data/categories';
-import { subcategories } from '../../data/subcategories';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function CourseDetail({ course, isLoading, onClose }) {
   const [likes, setLikes] = useState(course.likes || 0);
   const [reviewText, setReviewText] = useState('');
+  const [categoryName, setCategoryName] = useState('');
+  const [subcategoryName, setSubcategoryName] = useState('');
+  const [isLiked, setIsLiked] = useState(false);
 
-  const handleLike = () => setLikes(prev => prev + 1);
+  const user = JSON.parse(localStorage.getItem('loggedInUser'));
+  const userId = user?.id;
+
+  // ✅ Check liked từ dữ liệu mock
+  useEffect(() => {
+    if (!userId || !course?.id) return;
+    const hasLiked = likedCourses.some(
+      (entry) => entry.userId === userId && entry.courseId === course.id
+    );
+    setIsLiked(hasLiked);
+  }, [course?.id, userId]);
+
+  const handleLikeToggle = () => {
+    if (!userId) {
+      toast.warn('Vui lòng đăng nhập để sử dụng tính năng này!');
+      return;
+    }
+
+    if (isLiked) {
+      toast.info('❌ Đã bỏ thích khóa học');
+      setLikes((prev) => Math.max(prev - 1, 0));
+      setIsLiked(false);
+    } else {
+      toast.success('✅ Đã thêm vào yêu thích');
+      setLikes((prev) => prev + 1);
+      setIsLiked(true);
+    }
+  };
 
   const handleReviewSubmit = () => {
     const trimmed = reviewText.trim();
@@ -31,10 +66,21 @@ export default function CourseDetail({ course, isLoading, onClose }) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  if (isLoading) return <CourseDetailSkeleton />;
+  useEffect(() => {
+    const loadNames = async () => {
+      const [cats, subs] = await Promise.all([
+        fetchCategories(),
+        fetchSubcategories(),
+      ]);
+      const cat = cats.find((c) => c.id === course.categoryId);
+      const sub = subs.find((s) => s.id === course.subcategoryId);
+      setCategoryName(cat?.name || 'Không rõ');
+      setSubcategoryName(sub?.name || 'Không rõ');
+    };
+    loadNames();
+  }, [course]);
 
-  const categoryName = categories.find((c) => c.id === course.categoryId)?.name || 'Không rõ';
-  const subcategoryName = subcategories.find((s) => s.id === course.subcategoryId)?.name || 'Không rõ';
+  if (isLoading) return <CourseDetailSkeleton />;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -46,16 +92,33 @@ export default function CourseDetail({ course, isLoading, onClose }) {
         </div>
 
         <div className="course-detail-container">
-          <img src={course.image} alt={course.name} className="course-detail-image" />
+          <img
+            src={course.image}
+            alt={course.name}
+            className="course-detail-image"
+          />
           <div className="course-detail-info">
             <h2>{course.name}</h2>
-            <p><strong>Danh mục:</strong> {categoryName} - {subcategoryName}</p>
-            <p><strong>Mô tả:</strong> {course.description}</p>
+            <p>
+              <strong>Danh mục:</strong> {categoryName} - {subcategoryName}
+            </p>
+            <p>
+              <strong>Mô tả:</strong> {course.description}
+            </p>
             <p className="price">{course.price.toLocaleString()} VND</p>
+
             <div className="likes-section">
-              <button className="like-btn" onClick={handleLike}>❤️ Thích</button>
+              <button
+                className="like-btn"
+                onClick={handleLikeToggle}
+                style={{ color: isLiked ? '#6a0dad' : 'gray' }}
+              >
+                <FontAwesomeIcon icon={isLiked ? solidHeart : regularHeart} />{' '}
+                {isLiked ? 'Đã thích' : 'Thích'}
+              </button>
               <span className="like-count">{likes} lượt thích</span>
             </div>
+
             <button className="enroll-btn">
               {categoryName === 'Khóa học' ? 'Đăng ký học' : 'Mua tài liệu'}
             </button>
@@ -64,8 +127,12 @@ export default function CourseDetail({ course, isLoading, onClose }) {
 
         <div className="reviews-section">
           <h2>Đánh giá từ người học</h2>
-          <div className="review"><strong>Nguyễn Văn A</strong>: Rất hữu ích, dễ hiểu và sát với thực tế!</div>
-          <div className="review"><strong>Trần Thị B</strong>: Hình ảnh rõ ràng, nội dung tốt, xứng đáng!</div>
+          <div className="review">
+            <strong>Nguyễn Văn A</strong>: Rất hữu ích, dễ hiểu và sát với thực tế!
+          </div>
+          <div className="review">
+            <strong>Trần Thị B</strong>: Hình ảnh rõ ràng, nội dung tốt, xứng đáng!
+          </div>
           <div className="add-review">
             <textarea
               placeholder="Viết đánh giá của bạn tại đây..."
@@ -79,6 +146,8 @@ export default function CourseDetail({ course, isLoading, onClose }) {
             </button>
           </div>
         </div>
+
+        <ToastContainer position="top-center" autoClose={2000} />
       </div>
     </div>
   );

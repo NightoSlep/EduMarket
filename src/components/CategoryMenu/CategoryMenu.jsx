@@ -1,10 +1,25 @@
-// src/components/CategoryMenu/CategoryMenu.jsx
-import React from 'react';
-import { categories } from '../../data/categories';
-import { subcategories } from '../../data/subcategories';
+import React, { useEffect, useState } from 'react';
+import { fetchCategories } from '../../api/categories';
+import { fetchSubcategories } from '../../api/subcategories';
 import './CategoryMenu.css';
 
 export default function CategoryMenu({ categoryId, onSelect, isOpen }) {
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const [cats, subs] = await Promise.all([
+        fetchCategories(),
+        fetchSubcategories()
+      ]);
+      setCategories(cats);
+      setSubcategories(subs);
+    };
+
+    loadData();
+  }, []);
+
   const selectedCategory = categories.find((c) => c.id === categoryId);
   if (!selectedCategory) return null;
 

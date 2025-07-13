@@ -1,4 +1,7 @@
-export const courses = [
+import axios from 'axios';
+import AxiosMockAdapter from 'axios-mock-adapter';
+
+const mockCourses = [
   {
     id: 1,
     name: "Khóa học React cơ bản đến nâng cao",
@@ -6,7 +9,7 @@ export const courses = [
     image: "/assets/react.png",
     description: "Xây dựng ứng dụng thực tế với React.",
     categoryId: 1,
-    subcategoryId: 1,     // Lập trình (khóa học)
+    subcategoryId: 1,
     likes: 128
   },
   {
@@ -16,7 +19,7 @@ export const courses = [
     image: "/assets/uiux.png",
     description: "Tư duy và công cụ thiết kế giao diện người dùng.",
     categoryId: 1,
-    subcategoryId: 2,     // Thiết kế đồ họa (khóa học)
+    subcategoryId: 2,
     likes: 96
   },
   {
@@ -26,7 +29,7 @@ export const courses = [
     image: "/assets/english.png",
     description: "Tự tin giao tiếp tiếng Anh chỉ sau 4 tuần.",
     categoryId: 1,
-    subcategoryId: 3,     // Ngoại ngữ (khóa học)
+    subcategoryId: 3,
     likes: 142
   },
   {
@@ -36,37 +39,37 @@ export const courses = [
     image: "/assets/java.png",
     description: "Học Java thông qua thực hành ứng dụng.",
     categoryId: 1,
-    subcategoryId: 1,     // Lập trình (khóa học)
+    subcategoryId: 1,
     likes: 110
   },
   {
     id: 5,
     name: "Học máy toàn diện",
     price: 1150000,
-    image: "/assets/ml.jpg",
+    image: "/assets/ml.png",
     description: "Lý thuyết và bài tập về Machine Learning.",
-    categoryId: 2,  
-    subcategoryId: 4,      // Lập trình (tài liệu)
+    categoryId: 2,
+    subcategoryId: 4,
     likes: 89
   },
   {
     id: 6,
     name: "Thiết kế Poster chuyên nghiệp",
     price: 580000,
-    image: "/assets/poster.jpg",
+    image: "/assets/poster.png",
     description: "Học bố cục, màu sắc, font chữ qua bài mẫu.",
     categoryId: 2,
-    subcategoryId: 5,     // Thiết kế đồ họa (tài liệu)
+    subcategoryId: 5,
     likes: 74
   },
   {
     id: 7,
     name: "Luyện thi TOEIC 2025",
     price: 460000,
-    image: "/assets/toeic.jpg",
+    image: "/assets/toeic.png",
     description: "Ngữ pháp, từ vựng, đề luyện tập thực tế.",
     categoryId: 2,
-    subcategoryId: 6,     // Ngoại ngữ (tài liệu)
+    subcategoryId: 6,
     likes: 120
   },
   {
@@ -76,7 +79,7 @@ export const courses = [
     image: "/assets/algorithm.png",
     description: "Tư duy giải thuật, đệ quy, sắp xếp,...",
     categoryId: 2,
-    subcategoryId: 4,     // Lập trình (tài liệu)
+    subcategoryId: 4,
     likes: 132
   },
   {
@@ -86,27 +89,27 @@ export const courses = [
     image: "/assets/doc-react.png",
     description: "PDF + link demo thực hành React.",
     categoryId: 2,
-    subcategoryId: 4,     // Lập trình (tài liệu)
+    subcategoryId: 4,
     likes: 155
   },
   {
     id: 10,
     name: "Adobe Illustrator nâng cao",
     price: 340000,
-    image: "/assets/illustrator.jpg",
+    image: "/assets/illustrator.png",
     description: "Cách vẽ logo, icon, poster sáng tạo.",
     categoryId: 2,
-    subcategoryId: 5,     // Thiết kế đồ họa (tài liệu)
+    subcategoryId: 5,
     likes: 70
   },
   {
     id: 11,
     name: "Bộ đề ôn luyện IELTS Listening",
     price: 650000,
-    image: "/assets/ielts.jpg",
+    image: "/assets/ielts.png",
     description: "Thực hành nghe theo chuẩn đề thi thật.",
     categoryId: 2,
-    subcategoryId: 6,     // Ngoại ngữ (tài liệu)
+    subcategoryId: 6,
     likes: 103
   },
   {
@@ -116,7 +119,29 @@ export const courses = [
     image: "/assets/cpp.png",
     description: "Tài liệu ôn luyện giải thuật C++ nâng cao.",
     categoryId: 2,
-    subcategoryId: 4,     // Lập trình (tài liệu)
+    subcategoryId: 4,
     likes: 117
   }
 ];
+
+const axiosInstance = axios.create();
+
+const mock = new AxiosMockAdapter(axiosInstance, { delayResponse: 300 });
+
+mock.onGet('/courses').reply(200, mockCourses);
+
+mock.onGet(/\/courses\/\d+/).reply(config => {
+  const id = parseInt(config.url.split('/').pop(), 10);
+  const course = mockCourses.find(item => item.id === id);
+  return course ? [200, course] : [404, { message: 'Không tìm thấy khóa học' }];
+});
+
+export const fetchCourses = async () => {
+  const response = await axiosInstance.get('/courses');
+  return response.data;
+};
+
+export const fetchCourseById = async (id) => {
+  const response = await axiosInstance.get(`/courses/${id}`);
+  return response.data;
+};
