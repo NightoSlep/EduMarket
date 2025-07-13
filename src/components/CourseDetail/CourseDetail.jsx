@@ -21,7 +21,6 @@ export default function CourseDetail({ course, isLoading, onClose }) {
   const user = JSON.parse(localStorage.getItem('loggedInUser'));
   const userId = user?.id;
 
-  // ✅ Check liked từ dữ liệu mock
   useEffect(() => {
     if (!userId || !course?.id) return;
     const hasLiked = likedCourses.some(
