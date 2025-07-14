@@ -24,11 +24,9 @@ export default function CategoryMenu({ categoryId, onSelect, isOpen }) {
     loadData();
   }, []);
 
-  // Tìm danh mục đang được chọn
   const selectedCategory = categories.find(c => c.id === categoryId);
   if (!selectedCategory) return null;
 
-  // Lọc các danh mục con tương ứng
   const relatedSubcategories = subcategories.filter(
     sub => sub.categoryId === categoryId
   );

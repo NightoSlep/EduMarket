@@ -172,6 +172,7 @@
   cursor: pointer;
 }
 
+
 @keyframes slideFadeDown {
   from {
     opacity: 0;
@@ -295,7 +296,7 @@
   .subcategory-item {
     padding: 6px 10px;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     color: #333;
     cursor: pointer;

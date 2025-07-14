@@ -1,4 +1,4 @@
-import { axiosInstance } from './users'; // import từ file mock setup
+import { axiosInstance } from './users';
 
 export const loginUser = async (email, password) => {
   const res = await axiosInstance.post('/login', { email, password });
@@ -16,10 +16,5 @@ export const getCurrentUser = async (token) => {
       Authorization: `Bearer ${token}`
     }
   });
-  return res.data;
-};
-
-export const registerUser = async (name, email, password) => {
-  const res = await axiosInstance.post('/register', { name, email, password });
   return res.data;
 };

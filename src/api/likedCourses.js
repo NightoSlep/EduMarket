@@ -1,47 +1,7 @@
 import { axiosInstance, mock } from './axios';
+import likedCoursesData from '../mockData/likedCourses';
 
-let likedCourses = [
-  { userId: 1, courseId: 1 },
-  { userId: 1, courseId: 3 },
-  { userId: 1, courseId: 5 },
-  { userId: 2, courseId: 2 },
-  { userId: 2, courseId: 3 },
-  { userId: 2, courseId: 6 },
-  { userId: 3, courseId: 1 },
-  { userId: 3, courseId: 4 },
-  { userId: 3, courseId: 8 },
-  { userId: 3, courseId: 9 },
-  { userId: 4, courseId: 7 },
-  { userId: 4, courseId: 11 },
-  { userId: 5, courseId: 10 },
-  { userId: 5, courseId: 12 },
-];
-
-mock.onGet('/liked-courses').reply((config) => {
-  const userId = parseInt(config.params.userId, 10);
-  const userLikes = likedCourses.filter((l) => l.userId === userId);
-  return [200, userLikes];
-});
-
-mock.onPost('/liked-courses').reply((config) => {
-  const { userId, courseId } = JSON.parse(config.data);
-  const exists = likedCourses.some(
-    (l) => l.userId === userId && l.courseId === courseId
-  );
-  if (!exists) {
-    likedCourses.push({ userId, courseId });
-  }
-  return [201, { success: true }];
-});
-
-mock.onDelete('/liked-courses').reply((config) => {
-  const userId = parseInt(config.params.userId, 10);
-  const courseId = parseInt(config.params.courseId, 10);
-  likedCourses = likedCourses.filter(
-    (l) => !(l.userId === userId && l.courseId === courseId)
-  );
-  return [200, { success: true }];
-});
+let likedCourses = [...likedCoursesData];
 
 mock.onGet('/liked-courses').reply(config => {
   const userId = config.params?.userId;
@@ -51,6 +11,26 @@ mock.onGet('/liked-courses').reply(config => {
     return [200, userLikes];
   }
   return [200, likedCourses];
+});
+
+mock.onPost('/liked-courses').reply(config => {
+  const { userId, courseId } = JSON.parse(config.data);
+  const exists = likedCourses.some(
+    l => l.userId === userId && l.courseId === courseId
+  );
+  if (!exists) {
+    likedCourses.push({ userId, courseId });
+  }
+  return [201, { success: true }];
+});
+
+mock.onDelete('/liked-courses').reply(config => {
+  const userId = parseInt(config.params.userId, 10);
+  const courseId = parseInt(config.params.courseId, 10);
+  likedCourses = likedCourses.filter(
+    l => !(l.userId === userId && l.courseId === courseId)
+  );
+  return [200, { success: true }];
 });
 
 export const fetchLikedCourses = async (userId) => {

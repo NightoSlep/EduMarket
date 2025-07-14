@@ -1,0 +1,29 @@
+.search-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 10px 40px;
+  flex-wrap: wrap;
+}
+
+.course-title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .search-filter-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+}

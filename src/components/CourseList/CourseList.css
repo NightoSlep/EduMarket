@@ -17,6 +17,6 @@
   .course-list {
     justify-content: center;
     grid-template-columns: 1fr;
-    place-items: center;
+    place-items: center; 
   }
 }

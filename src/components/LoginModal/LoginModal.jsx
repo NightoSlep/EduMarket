@@ -1,13 +1,14 @@
-import React, { useState } from "react";
 import "./LoginModal.css";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+
 import { loginUser } from "../../api/auth";
 
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); 
 
   if (!isOpen) return null;
 

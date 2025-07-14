@@ -23,10 +23,10 @@ export default function SearchBar({  value, onSearchChange }) {
   const handleBlur = () => {
     setFocused(false);
     setTimeout(() => {
-    if (!wrapperRef.current?.matches(':hover')) {
-      setExpanded(false);
-    }
-  }, 100);
+      if (!wrapperRef.current?.matches(':hover')) {
+        setExpanded(false);
+      }
+    }, 100);
   };
 
   const handleMouseEnter = () => {

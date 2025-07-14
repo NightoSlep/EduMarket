@@ -1,41 +1,11 @@
 import axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
-
-let users = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    email: "a@example.com",
-    password: "123",
-  },
-  {
-    id: 2,
-    name: "Trần Thị B",
-    email: "b.tran@example.com",
-    password: "123",
-  },
-  {
-    id: 3,
-    name: "Lê Văn C",
-    email: "c.le@example.com",
-    password: "123",
-  },
-  {
-    id: 4,
-    name: "Phạm Minh D",
-    email: "d.pham@example.com",
-    password: "123",
-  },
-  {
-    id: 5,
-    name: "Hoàng Thị E",
-    email: "e.hoang@example.com",
-    password: "123",
-  }
-];
+import usersData from '../mockData/users';
 
 export const axiosInstance = axios.create();
 export const mock = new AxiosMockAdapter(axiosInstance, { delayResponse: 500 });
+
+let users = [...usersData];
 
 let fakeToken = null;
 let currentUser = null;

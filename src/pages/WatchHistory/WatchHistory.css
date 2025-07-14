@@ -1,0 +1,175 @@
+.watch-history-page {
+  padding: 0 20px;
+  max-width: 1200px;
+  margin: auto;
+  width: 50%;
+  min-width: 400px;
+}
+
+.watch-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.watch-history-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.watch-history-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: -25px;
+}
+
+.watch-history-layout {
+  display: flex;
+  gap: 20px;
+}
+
+.watch-history-content {
+  flex: 1;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  max-height: 650px;
+  overflow-y: auto;
+  min-height: 500px;
+}
+
+.watch-history-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 12px;
+  border-bottom: 1px solid #eee;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.history-card:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.history-left {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  text-align: left;
+}
+
+.course-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.category-info {
+  color: #666;
+  font-size: 14px;
+}
+
+.watched-time {
+  font-size: 14px;
+  color: #888;
+  white-space: nowrap;
+  margin-left: 20px;
+  align-self: flex-start;
+}
+
+.pagination {
+  margin-top: 24px;
+  text-align: center;
+  padding-bottom: 40px;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  margin: 0 4px;
+  border: none;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination button.active {
+  background-color: #6a0dad;
+  color: white;
+}
+
+.watch-history-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: fadeSlideUp 0.3s ease;
+}
+
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .watch-history-page {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .watch-history-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .watch-history-actions {
+    margin-right: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .history-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 8px;
+  }
+
+  .watched-time {
+    margin-left: 0;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+
+  .course-name {
+    font-size: 18px;
+  }
+
+  .category-info {
+    font-size: 13px;
+  }
+
+  .pagination {
+    padding-bottom: 20px;
+  }
+}

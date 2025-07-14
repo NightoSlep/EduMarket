@@ -68,6 +68,11 @@
   color: #6200ee;
 }
 
+.price-option input:disabled + span {
+  color: #aaa;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .price-filter-wrapper {
     margin-left: 0;

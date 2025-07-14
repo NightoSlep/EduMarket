@@ -42,6 +42,7 @@ export default function Header({ onCategorySelect }) {
 
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("token");
     setUser(null);
     setMenuOpen(false);
     setExpandedCategories([]);
@@ -63,7 +64,14 @@ export default function Header({ onCategorySelect }) {
         className="menu-item liked-link"
         onClick={handleLikedClick}
       >
-        ❤️ Yêu thích
+        Sở thích
+      </Link>
+      <Link
+        to={user ? "/history" : "#"}
+        className="menu-item"
+        onClick={handleHistoryClick}
+      >
+        Lịch sử xem
       </Link>
       <FaLightbulb className="lightbulb-icon desktop" title="Gợi ý thông minh!" />
     </>
@@ -100,7 +108,14 @@ export default function Header({ onCategorySelect }) {
         className="menu-item"
         onClick={handleLikedClick}
       >
-        Yêu thích
+        Sở thích
+      </Link>
+      <Link
+        to={user ? "/history" : "#"}
+        className="menu-item"
+        onClick={handleHistoryClick}
+      >
+        Lịch sử xem
       </Link>
       {user ? (
         <div className="menu-item logout-item" onClick={handleLogout}>
@@ -131,6 +146,15 @@ export default function Header({ onCategorySelect }) {
     }
   };
 
+  const handleHistoryClick = (e) => {
+    if (!user) {
+      e.preventDefault();
+      alert("❗ Bạn cần đăng nhập để xem lịch sử!");
+    } else {
+      setMenuOpen(false);
+      setExpandedCategories([]);
+    }
+  };
 
   return (
     <header className="app-header">
