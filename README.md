@@ -37,3 +37,14 @@ Vercel will auto-detect Vite
 
 Click Deploy
 
+✅ Post-deploy Check
+
+After deployment, open your site in a browser.
+
+If you see a blank page:
+
+Double-check the base path
+
+Ensure routing is correctly handled (e.g., SPA fallback)
+
+Open the browser console for 404 or loading errors
