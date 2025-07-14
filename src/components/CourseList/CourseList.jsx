@@ -8,7 +8,7 @@ export default function CourseList({ courses, isLoading, onSelectCourse }) {
     <div className="course-list-wrapper">
       <div className="course-list">
         {isLoading
-          ? Array.from({ length: 8 }).map((_, index) => (
+          ? Array.from({ length: 10 }).map((_, index) => (
               <CourseCardSkeleton key={index} />
             ))
           : courses.map(course => (
