@@ -3,7 +3,7 @@ import CourseList from '../components/CourseList/CourseList';
 import CourseDetail from '../components/CourseDetail/CourseDetail';
 import Pagination from '../components/Pagination/Pagination';
 import { fetchCourses } from '../api/courses';
-import { likedCourses as likedData } from '../data/likedCourses';
+import { fetchLikedCourses } from '../api/likedCourses';
 
 export default function LikedCourses() {
   const [likedCourses, setLikedCourses] = useState([]);
@@ -24,20 +24,23 @@ export default function LikedCourses() {
 
     const userId = user.id;
 
-    const likedIds = likedData
-      .filter(item => item.userId === userId)
-      .map(item => item.courseId);
+    const loadData = async () => {
+      try {
+        const liked = await fetchLikedCourses(userId);
+        const likedIds = liked.map(item => item.courseId);
 
-    fetchCourses()
-      .then(allCourses => {
+        const allCourses = await fetchCourses();
         const filtered = allCourses.filter(course => likedIds.includes(course.id));
+
         setLikedCourses(filtered);
+      } catch (err) {
+        console.error("Lỗi tải dữ liệu yêu thích:", err);
+      } finally {
         setLoading(false);
-      })
-      .catch(err => {
-        console.error("Lỗi tải courses:", err);
-        setLoading(false);
-      });
+      }
+    };
+
+    loadData();
   }, []);
 
   useEffect(() => {

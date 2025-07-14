@@ -1,5 +1,4 @@
-import axios from 'axios';
-import AxiosMockAdapter from 'axios-mock-adapter';
+import { axiosInstance, mock } from './axios';
 
 const mockCourses = [
   {
@@ -123,10 +122,6 @@ const mockCourses = [
     likes: 117
   }
 ];
-
-const axiosInstance = axios.create();
-
-const mock = new AxiosMockAdapter(axiosInstance, { delayResponse: 300 });
 
 mock.onGet('/courses').reply(200, mockCourses);
 

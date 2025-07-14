@@ -9,28 +9,34 @@ export default function CategoryMenu({ categoryId, onSelect, isOpen }) {
 
   useEffect(() => {
     const loadData = async () => {
-      const [cats, subs] = await Promise.all([
-        fetchCategories(),
-        fetchSubcategories()
-      ]);
-      setCategories(cats);
-      setSubcategories(subs);
+      try {
+        const [cats, subs] = await Promise.all([
+          fetchCategories(),
+          fetchSubcategories()
+        ]);
+        setCategories(cats);
+        setSubcategories(subs);
+      } catch (err) {
+        console.error('Lỗi khi tải danh mục hoặc danh mục con:', err);
+      }
     };
 
     loadData();
   }, []);
 
-  const selectedCategory = categories.find((c) => c.id === categoryId);
+  // Tìm danh mục đang được chọn
+  const selectedCategory = categories.find(c => c.id === categoryId);
   if (!selectedCategory) return null;
 
+  // Lọc các danh mục con tương ứng
   const relatedSubcategories = subcategories.filter(
-    (sub) => sub.categoryId === categoryId
+    sub => sub.categoryId === categoryId
   );
 
   return (
     <div className={`category-dropdown ${isOpen ? 'open' : ''}`}>
-      <ul className="subcategory-list vertical">
-        {relatedSubcategories.map((sub) => (
+      <ul className="subcategory-list">
+        {relatedSubcategories.map(sub => (
           <li
             key={sub.id}
             className="subcategory-item"

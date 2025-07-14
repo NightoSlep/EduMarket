@@ -6,53 +6,123 @@ import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons';
 import { fetchCategories } from '../../api/categories';
 import { fetchSubcategories } from '../../api/subcategories';
-import { likedCourses } from '../../data/likedCourses';
+import { fetchReviewsByCourseId } from '../../api/reviews';
+import {
+  fetchLikedCourses,
+  likeCourse,
+  unlikeCourse,
+} from '../../api/likedCourses';
 import { ToastContainer, toast } from 'react-toastify';
 import CourseDetailSkeleton from './CourseDetailSkeleton/CourseDetailSkeleton';
 import 'react-toastify/dist/ReactToastify.css';
 
-export default function CourseDetail({ course, isLoading, onClose }) {
-  const [likes, setLikes] = useState(course.likes || 0);
+export default function CourseDetail({ course, onClose }) {
+  const [likes, setLikes] = useState(0);
   const [reviewText, setReviewText] = useState('');
   const [categoryName, setCategoryName] = useState('');
   const [subcategoryName, setSubcategoryName] = useState('');
   const [isLiked, setIsLiked] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const user = JSON.parse(localStorage.getItem('loggedInUser'));
   const userId = user?.id;
 
   useEffect(() => {
-    if (!userId || !course?.id) return;
-    const hasLiked = likedCourses.some(
-      (entry) => entry.userId === userId && entry.courseId === course.id
-    );
-    setIsLiked(hasLiked);
-  }, [course?.id, userId]);
+    const fetchLikeInfo = async () => {
+      if (!userId || !course?.id) return;
+      try {
+        const liked = await fetchLikedCourses(userId);
+        const hasLiked = liked.some((entry) => entry.courseId === course.id);
+        setIsLiked(hasLiked);
 
-  const handleLikeToggle = () => {
+        const allUserLikes = await fetchLikedCourses();
+        const courseLikeCount = allUserLikes.filter(
+          (entry) => entry.courseId === course.id
+        ).length;
+        setLikes(courseLikeCount);
+      } catch (error) {
+        console.error('Lỗi khi xử lý likedCourses:', error);
+      }
+    };
+
+    fetchLikeInfo();
+  }, [userId, course?.id]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [cats, subs, fetchedReviews] = await Promise.all([
+          fetchCategories(),
+          fetchSubcategories(),
+          fetchReviewsByCourseId(course.id),
+        ]);
+        if (!isMounted) return;
+
+        const cat = cats.find((c) => c.id === course.categoryId);
+        const sub = subs.find((s) => s.id === course.subcategoryId);
+        setCategoryName(cat?.name || 'Không rõ');
+        setSubcategoryName(sub?.name || 'Không rõ');
+        setReviews(fetchedReviews);
+      } catch (err) {
+        console.error('Lỗi tải dữ liệu khóa học:', err);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+    fetchData();
+    return () => {
+      isMounted = false;
+    };
+  }, [course]);
+
+  const handleLikeToggle = async () => {
     if (!userId) {
       toast.warn('Vui lòng đăng nhập để sử dụng tính năng này!');
       return;
     }
-
-    if (isLiked) {
-      toast.info('❌ Đã bỏ thích khóa học');
-      setLikes((prev) => Math.max(prev - 1, 0));
-      setIsLiked(false);
-    } else {
-      toast.success('✅ Đã thêm vào yêu thích');
-      setLikes((prev) => prev + 1);
-      setIsLiked(true);
+    try {
+      if (isLiked) {
+        await unlikeCourse(userId, course.id);
+        toast.info('❌ Đã bỏ thích khóa học');
+        setIsLiked(false);
+        setLikes((prev) => Math.max(prev - 1, 0));
+      } else {
+        await likeCourse(userId, course.id);
+        toast.success('✅ Đã thêm vào yêu thích');
+        setIsLiked(true);
+        setLikes((prev) => prev + 1);
+      }
+    } catch (error) {
+      console.error('Lỗi khi xử lý like/unlike:', error);
+      toast.error('⚠️ Đã có lỗi xảy ra!');
     }
   };
 
   const handleReviewSubmit = () => {
     const trimmed = reviewText.trim();
+    if (!userId) {
+      toast.warn('❗ Bạn cần đăng nhập để gửi đánh giá.');
+      return;
+    }
     if (!trimmed) {
       alert('❗ Vui lòng nhập nội dung đánh giá.');
       return;
     }
+
+    const newReview = {
+      id: Date.now(),
+      courseId: course.id,
+      name: user.name,
+      content: trimmed,
+      createdAt: new Date().toISOString(),
+    };
+  
+    setReviews((prev) => [newReview, ...prev]);
     setReviewText('');
+    toast.success('✅ Gửi đánh giá thành công!');
   };
 
   useEffect(() => {
@@ -64,20 +134,6 @@ export default function CourseDetail({ course, isLoading, onClose }) {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
-
-  useEffect(() => {
-    const loadNames = async () => {
-      const [cats, subs] = await Promise.all([
-        fetchCategories(),
-        fetchSubcategories(),
-      ]);
-      const cat = cats.find((c) => c.id === course.categoryId);
-      const sub = subs.find((s) => s.id === course.subcategoryId);
-      setCategoryName(cat?.name || 'Không rõ');
-      setSubcategoryName(sub?.name || 'Không rõ');
-    };
-    loadNames();
-  }, [course]);
 
   if (isLoading) return <CourseDetailSkeleton />;
 
@@ -110,7 +166,7 @@ export default function CourseDetail({ course, isLoading, onClose }) {
               <button
                 className="like-btn"
                 onClick={handleLikeToggle}
-                style={{ color: isLiked ? '#6a0dad' : 'gray' }}
+                style={{ color: isLiked ? 'red' : 'gray' }}
               >
                 <FontAwesomeIcon icon={isLiked ? solidHeart : regularHeart} />{' '}
                 {isLiked ? 'Đã thích' : 'Thích'}
@@ -126,12 +182,32 @@ export default function CourseDetail({ course, isLoading, onClose }) {
 
         <div className="reviews-section">
           <h2>Đánh giá từ người học</h2>
-          <div className="review">
-            <strong>Nguyễn Văn A</strong>: Rất hữu ích, dễ hiểu và sát với thực tế!
-          </div>
-          <div className="review">
-            <strong>Trần Thị B</strong>: Hình ảnh rõ ràng, nội dung tốt, xứng đáng!
-          </div>
+
+          {reviews.length === 0 && (
+            <div style={{ fontStyle: 'italic', color: '#888' }}>
+              Chưa có đánh giá nào.
+            </div>
+          )}
+
+          {reviews.map((review) => (
+            <div key={review.id} className="review">
+              <div className="review-header">
+                <img
+                  className="review-avatar"
+                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                    review.name
+                  )}&background=6a00ff&color=fff&size=32`}
+                  alt="avatar"
+                />
+                <strong className="review-name">{review.name}</strong>
+                <span className="review-time">
+                  {new Date(review.createdAt).toLocaleString('vi-VN')}
+                </span>
+              </div>
+              <div className="review-text">{review.content}</div>
+            </div>
+          ))}
+
           <div className="add-review">
             <textarea
               placeholder="Viết đánh giá của bạn tại đây..."
@@ -145,7 +221,6 @@ export default function CourseDetail({ course, isLoading, onClose }) {
             </button>
           </div>
         </div>
-
         <ToastContainer position="top-center" autoClose={2000} />
       </div>
     </div>

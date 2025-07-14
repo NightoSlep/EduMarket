@@ -18,14 +18,19 @@ export default function App() {
   const [categoryFilter, setCategoryFilter] = useState(null);
   const [subcategoryFilter, setSubcategoryFilter] = useState(null);
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [detailLoading, setDetailLoading] = useState(true);
 
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
-  const { filteredCourses, loading } = useCourseFilter(searchTerm, priceRange, subcategoryFilter);
+
+  const { filteredCourses, loading } = useCourseFilter(
+    searchTerm,
+    priceRange,
+    subcategoryFilter
+  );
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+
   const currentCourses = filteredCourses.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -36,19 +41,14 @@ export default function App() {
   }, [searchTerm, priceRange, subcategoryFilter]);
 
   useEffect(() => {
-    fetchCategories().then(setCategories);
-    fetchSubcategories().then(setSubcategories);
+    Promise.all([fetchCategories(), fetchSubcategories()])
+      .then(([cats, subs]) => {
+        setCategories(cats);
+        setSubcategories(subs);
+      });
   }, []);
 
-  useEffect(() => {
-    if (selectedCourse) {
-      setDetailLoading(true);
-      const timer = setTimeout(() => setDetailLoading(false), 800);
-      return () => clearTimeout(timer);
-    }
-  }, [selectedCourse]);
-
-  const renderTitle = () => {
+  const getTitle = () => {
     const category = categories.find(c => c.id === categoryFilter);
     const subcategory = subcategories.find(sc => sc.id === subcategoryFilter);
     if (category && subcategory) return `${category.name} - ${subcategory.name}`;
@@ -79,44 +79,44 @@ export default function App() {
         categories={categories}
         subcategories={subcategories}
       />
-      <main>
-        <div className="content-wrapper">
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <div className="search-filter-row">
-                    <h2 className="course-title">{renderTitle()}</h2>
-                    <div className="filter-group">
-                      <SearchBar value={searchTerm} onSearchChange={setSearchTerm} />
-                      <PriceFilter value={priceRange} onChange={setPriceRange} />
-                    </div>
-                  </div>
 
-                  <CourseList
-                    courses={currentCourses}
-                    isLoading={loading}
-                    onSelectCourse={setSelectedCourse}
-                  />
+      <Routes>
+        {/* Trang chính hiển thị danh sách khóa học */}
+        <Route
+          path="/"
+          element={
+            <>
+              <div className="search-filter-row">
+                <h2 className="course-title">{getTitle()}</h2>
+                <div className="filter-group">
+                  <SearchBar value={searchTerm} onSearchChange={setSearchTerm} />
+                  <PriceFilter value={priceRange} onChange={setPriceRange} />
+                </div>
+              </div>
 
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                  />
-                </>
-              }
-            />
-            <Route path="/liked" element={<LikedCourses />} />
-          </Routes>
-        </div>
-      </main>
+              <CourseList
+                courses={currentCourses}
+                isLoading={loading}
+                onSelectCourse={setSelectedCourse}
+              />
 
+              <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(filteredCourses.length / itemsPerPage)}
+                onPageChange={setCurrentPage}
+              />
+            </>
+          }
+        />
+
+        {/* Trang yêu thích */}
+        <Route path="/liked" element={<LikedCourses />} />
+      </Routes>
+
+      {/* Modal chi tiết khóa học */}
       {selectedCourse && (
         <CourseDetail
           course={selectedCourse}
-          isLoading={detailLoading}
           onClose={() => setSelectedCourse(null)}
           categories={categories}
           subcategories={subcategories}

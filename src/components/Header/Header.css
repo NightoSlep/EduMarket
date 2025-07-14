@@ -29,6 +29,7 @@
   font-size: 24px;
   font-weight: bold;
   color: #6a00ff;
+  cursor: pointer;
 }
 
 .lightbulb-icon {
@@ -257,19 +258,57 @@
   }
 
   .category-submenu-wrapper {
+    width: 100%;
+    overflow: hidden;
     max-height: 0;
     opacity: 0;
-    overflow: hidden;
-    transform: translateY(-10px);
+    background-color: #f3f2ff;
+    transform: translateY(-8px);
     transition:
       max-height 0.4s ease,
-      opacity 0.3s ease,
-      transform 0.3s ease;
+      opacity 0.35s ease,
+      transform 0.35s ease;
   }
 
   .category-submenu-wrapper.open {
     max-height: 500px;
     opacity: 1;
     transform: translateY(0);
+  }
+
+  .category-submenu-wrapper .category-dropdown {
+    position: static;
+    background-color: #f3f2ff;
+    box-shadow: none;
+    min-width: auto;
+    border-radius: 0;
+    display: block;
+  }
+
+  .subcategory-list {
+    padding: 6px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .subcategory-item {
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+  }
+
+  .subcategory-item:hover {
+    background-color: #eae2ff;
+  }
+
+  .menu-item,
+  .category-hover,
+  .subcategory-item {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
   }
 }

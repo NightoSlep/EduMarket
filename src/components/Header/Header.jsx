@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaLightbulb } from 'react-icons/fa';
 import { fetchCategories } from '../../api/categories';
 import useResponsiveMenu from '../../hooks/useResponsiveMenu';
@@ -7,7 +7,8 @@ import CategoryMenu from '../CategoryMenu/CategoryMenu';
 import LoginModal from '../LoginModal/LoginModal';
 import './Header.css';
 
-export default function Header({ onCategorySelect, onResetFilters }) {
+export default function Header({ onCategorySelect }) {
+  const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
   const [categories, setCategories] = useState([]);
   const [user, setUser] = useState(() => {
@@ -19,10 +20,10 @@ export default function Header({ onCategorySelect, onResetFilters }) {
     isMobile,
     menuOpen,
     setMenuOpen,
-    expandedCategory,
+    expandedCategories,
     toggleCategory,
     navRef,
-    setExpandedCategory,
+    setExpandedCategories,
   } = useResponsiveMenu();
 
   useEffect(() => {
@@ -32,8 +33,7 @@ export default function Header({ onCategorySelect, onResetFilters }) {
   }, []);
 
   const handleLogoClick = () => {
-    onResetFilters();
-    window.scrollTo(0, 0);
+    window.location.href = '/';
   };
 
   const handleLoginSuccess = (userData) => {
@@ -44,7 +44,8 @@ export default function Header({ onCategorySelect, onResetFilters }) {
     localStorage.removeItem("loggedInUser");
     setUser(null);
     setMenuOpen(false);
-    setExpandedCategory(null);
+    setExpandedCategories([]);
+    navigate('/');
   };
 
   const renderDesktopNav = () => (
@@ -60,12 +61,7 @@ export default function Header({ onCategorySelect, onResetFilters }) {
       <Link
         to={user ? "/liked" : "#"}
         className="menu-item liked-link"
-        onClick={(e) => {
-          if (!user) {
-            e.preventDefault();
-            alert("❗ Bạn cần đăng nhập để xem danh sách yêu thích!");
-          }
-        }}
+        onClick={handleLikedClick}
       >
         ❤️ Yêu thích
       </Link>
@@ -75,38 +71,34 @@ export default function Header({ onCategorySelect, onResetFilters }) {
 
   const renderMobileNav = () => (
     <>
-      {categories.map((cat) => (
-        <div key={cat.id}>
-          <div
-            className="menu-item category-toggle"
-            onClick={() => toggleCategory(cat.id)}
-          >
-            {cat.name} {expandedCategory === cat.id ? '▾' : '▸'}
+      {categories.map((cat) => {
+        const isOpen = expandedCategories.includes(cat.id);
+        return (
+          <div key={cat.id}>
+            <div
+              className="menu-item category-toggle"
+              onClick={() => toggleCategory(cat.id)}
+            >
+              {cat.name} {isOpen ? '▾' : '▸'}
+            </div>
+            <div className={`category-submenu-wrapper ${isOpen ? 'open' : ''}`}>
+              <CategoryMenu
+                categoryId={cat.id}
+                onSelect={(catId, subId) => {
+                  onCategorySelect(catId, subId);
+                  setMenuOpen(false);
+                  setExpandedCategories([]);
+                }}
+                isOpen={isOpen}
+              />
+            </div>
           </div>
-          <div className={`category-submenu-wrapper ${expandedCategory === cat.id ? 'open' : ''}`}>
-            <CategoryMenu
-              categoryId={cat.id}
-              onSelect={(catId, subId) => {
-                onCategorySelect(catId, subId);
-                setMenuOpen(false);
-              }}
-              isOpen={expandedCategory === cat.id}
-            />
-          </div>
-        </div>
-      ))}
+        );
+      })}
       <Link
         to={user ? "/liked" : "#"}
         className="menu-item"
-        onClick={(e) => {
-          if (!user) {
-            e.preventDefault();
-            alert("❗ Bạn cần đăng nhập để xem danh sách yêu thích!");
-          } else {
-            setMenuOpen(false);
-            setExpandedCategory(null);
-          }
-        }}
+        onClick={handleLikedClick}
       >
         Yêu thích
       </Link>
@@ -120,7 +112,7 @@ export default function Header({ onCategorySelect, onResetFilters }) {
           onClick={() => {
             setShowLogin(true);
             setMenuOpen(false);
-            setExpandedCategory(null);
+            setExpandedCategories([]);
           }}
         >
           Đăng nhập
@@ -129,14 +121,27 @@ export default function Header({ onCategorySelect, onResetFilters }) {
     </>
   );
 
+  const handleLikedClick = (e) => {
+    if (!user) {
+      e.preventDefault();
+      alert("❗ Bạn cần đăng nhập để xem danh sách yêu thích!");
+    } else {
+      setMenuOpen(false);
+      setExpandedCategories([]);
+    }
+  };
+
+
   return (
     <header className="app-header">
       <div className="header-container">
         <div className="logo-area">
-          <Link to="/" className="logo-link" onClick={handleLogoClick}>
+          <div className="logo-link" onClick={handleLogoClick}>
             <div className="logo">Edu</div>
-          </Link>
-          {isMobile && <FaLightbulb className="lightbulb-icon mobile" title="Gợi ý thông minh!" />}
+          </div>
+          {isMobile && (
+            <FaLightbulb className="lightbulb-icon mobile" title="Gợi ý thông minh!" />
+          )}
         </div>
 
         <div className="right-controls">
@@ -153,7 +158,7 @@ export default function Header({ onCategorySelect, onResetFilters }) {
               const nextState = !menuOpen;
               setMenuOpen(nextState);
               if (!nextState) {
-                setExpandedCategory(null);
+                setExpandedCategories([]);
               }
             }}
           >
@@ -186,7 +191,7 @@ export default function Header({ onCategorySelect, onResetFilters }) {
                   onClick={() => {
                     setShowLogin(true);
                     setMenuOpen(false);
-                    setExpandedCategory(null);
+                    setExpandedCategories([]);
                   }}
                 >
                   Đăng nhập

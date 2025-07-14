@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 export default function useResponsiveMenu() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [expandedCategory, setExpandedCategory] = useState(null);
+  const [expandedCategories, setExpandedCategories] = useState([]);
   const navRef = useRef(null);
 
   useEffect(() => {
@@ -20,23 +20,28 @@ export default function useResponsiveMenu() {
         !e.target.closest('.menu-toggle')
       ) {
         setMenuOpen(false);
-        setExpandedCategory(null);
+        setExpandedCategories([]);
       }
     };
     if (menuOpen) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [menuOpen]);
 
-  const toggleCategory = (cat) =>
-    setExpandedCategory((prev) => (prev === cat ? null : cat));
+  const toggleCategory = (catId) => {
+    setExpandedCategories((prev) =>
+      prev.includes(catId)
+        ? prev.filter((id) => id !== catId)
+        : [...prev, catId]
+    );
+  };
 
   return {
     isMobile,
     menuOpen,
     setMenuOpen,
-    expandedCategory,
+    expandedCategories,
     toggleCategory,
     navRef,
-    setExpandedCategory,
+    setExpandedCategories,
   };
 }

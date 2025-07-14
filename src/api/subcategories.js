@@ -1,6 +1,4 @@
-// src/api/subcategories.js
-import axios from 'axios';
-import AxiosMockAdapter from 'axios-mock-adapter';
+import { axiosInstance, mock } from './axios';
 
 const mockSubcategories = [
   { id: 1, name: 'Lập trình', categoryId: 1 },
@@ -10,9 +8,6 @@ const mockSubcategories = [
   { id: 5, name: 'Thiết kế đồ họa', categoryId: 2 },
   { id: 6, name: 'Ngoại ngữ', categoryId: 2 }
 ];
-
-const axiosInstance = axios.create();
-const mock = new AxiosMockAdapter(axiosInstance, { delayResponse: 200 });
 
 mock.onGet('/subcategories').reply(200, mockSubcategories);
 

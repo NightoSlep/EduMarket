@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./LoginModal.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { users } from "../../data/users";
+import { loginUser } from "../../api/auth";
 
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [email, setEmail] = useState("");
@@ -11,20 +11,24 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
   if (!isOpen) return null;
 
-  const handleLogin = () => {
-    const user = users.find(
-      (u) => u.email === email.trim() && u.password === password
-    );
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleLogin();
+    }
+  };
 
-    if (user) {
+  const handleLogin = async () => {
+    try {
+      const { user, token } = await loginUser(email.trim(), password);
       localStorage.setItem("loggedInUser", JSON.stringify(user));
+      localStorage.setItem("token", token);
       onLoginSuccess(user);
-      setEmail(""); 
-      setPassword(""); 
+      setEmail("");
+      setPassword("");
       setError("");
       onClose();
-    } else {
-      setError("Email hoặc mật khẩu không đúng.");
+    } catch (err) {
+      setError(err.response?.data?.message || "Đăng nhập thất bại.");
     }
   };
 
@@ -44,11 +48,20 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
           placeholder="Mật khẩu"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
         <button className="login-btn" onClick={handleLogin}>
           Đăng nhập
         </button>
-        <button className="close-btn" onClick={onClose}>
+        <button 
+          className="close-btn" 
+          onClick={() => {
+            setError("");
+            setEmail("");
+            setPassword("");
+            onClose();
+          }}
+        >
           <FontAwesomeIcon icon={faXmark} />
         </button>
       </div>
