@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { fetchCourseById } from '../api/courses';
 
 export default function useCart() {
   const [cartItems, setCartItems] = useState(() => {
@@ -10,12 +11,18 @@ export default function useCart() {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (course) => {
-    setCartItems((prev) => {
-      const exists = prev.find((c) => c.id === course.id);
-      if (exists) return prev;
-      return [...prev, course];
-    });
+  const addToCart = async (id) => {
+    const exists = cartItems.find((c) => c.id === id);
+    if (exists) return;
+
+    try {
+      const course = await fetchCourseById(id);
+      if (course) {
+        setCartItems((prev) => [...prev, course]);
+      }
+    } catch (err) {
+      console.error('❌ Failed to fetch course by ID:', id, err);
+    }
   };
 
   const removeFromCart = (id) => {

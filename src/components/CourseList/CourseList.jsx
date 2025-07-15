@@ -15,6 +15,7 @@ export default function CourseList({ courses, isLoading, onSelectCourse }) {
       onSelectCourse(course);
     }
   };
+
   return (
     <div className="course-list-wrapper">
       <div className="course-list">

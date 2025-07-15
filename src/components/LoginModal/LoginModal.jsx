@@ -39,7 +39,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
 
 return (
   <>
-    <div className="overlay">
+    <div className="login-overlay">
       <div className="content" onClick={(e) => e.stopPropagation()}>
         <h2>Đăng nhập</h2>
         {error && <p className="error-msg">{error}</p>}

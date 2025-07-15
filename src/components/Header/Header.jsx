@@ -1,7 +1,8 @@
+import './Header.css';
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaBars, FaLightbulb } from 'react-icons/fa';
+import { FaBars, FaLightbulb, FaShoppingCart } from 'react-icons/fa';
 import { fetchCategories } from '../../api/categories';
 import { fetchLikedCourses } from '../../api/likedCourses';
 import { fetchWatchHistory } from '../../api/watchHistory';
@@ -9,7 +10,7 @@ import { fetchCourses } from '../../api/courses';
 import useResponsiveMenu from '../../hooks/useResponsiveMenu';
 import CategoryMenu from '../CategoryMenu/CategoryMenu';
 import LoginModal from '../LoginModal/LoginModal';
-import './Header.css';
+import useCart from '../../hooks/useCart';
 
 export default function Header({ onCategorySelect, onSuggestCourses  }) {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export default function Header({ onCategorySelect, onSuggestCourses  }) {
     const stored = localStorage.getItem("loggedInUser");
     return stored ? JSON.parse(stored) : null;
   });
+  const { cartItems } = useCart();
 
   const {
     isMobile,
@@ -79,6 +81,7 @@ export default function Header({ onCategorySelect, onSuggestCourses  }) {
     localStorage.removeItem("loggedInUser");
     localStorage.removeItem("token");
     localStorage.removeItem("watchHistory");
+    localStorage.removeItem("cartItems");
     setUser(null);
     setMenuOpen(false);
     setExpandedCategories([]);
@@ -246,6 +249,16 @@ export default function Header({ onCategorySelect, onSuggestCourses  }) {
 
           {!isMobile && (
             <div className="nav-right">
+              {user && (
+                <div className="cart-wrapper">
+                  <Link to="/cart" className="cart-icon" title="Giỏ hàng">
+                    <FaShoppingCart />
+                    {cartItems.length > 0 && (
+                      <span className="cart-badge">{cartItems.length}</span>
+                    )}
+                  </Link>
+                </div>
+              )}
               {user ? (
                 <div className="user-info desktop-dropdown">
                   <img

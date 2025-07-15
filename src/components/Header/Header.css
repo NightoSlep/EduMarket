@@ -172,6 +172,39 @@
   cursor: pointer;
 }
 
+.cart-wrapper {
+  position: relative;
+  margin-right: 30px;
+}
+
+.cart-icon {
+  position: relative;
+  font-size: 20px;
+  color: #6a00ff;
+  transition: transform 0.2s ease, color 0.2s ease;
+  display: inline-block;
+}
+
+.cart-icon:hover {
+  color: #4e00c2;
+  transform: scale(1.2);
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -14px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 6px;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1;
+}
+
 @media (max-width: 768px) {
   .app-header {
     background-color: #6a00ff;
@@ -192,6 +225,8 @@
   .lightbulb-icon.mobile {
     display: inline;
   }
+
+
 
   .menu-toggle {
     display: block;
@@ -299,5 +334,17 @@
   .subcategory-item {
     -webkit-tap-highlight-color: transparent;
     user-select: none;
+  }
+
+  .lightbulb-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+  }
+
+  .bulb-label {
+    color: white;
+    font-weight: 500;
   }
 }
