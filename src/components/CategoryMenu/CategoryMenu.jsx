@@ -20,7 +20,6 @@ export default function CategoryMenu({ categoryId, onSelect, isOpen }) {
         console.error('Lỗi khi tải danh mục hoặc danh mục con:', err);
       }
     };
-
     loadData();
   }, []);
 

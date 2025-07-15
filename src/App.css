@@ -4,38 +4,11 @@
   min-height: 100vh;
 }
 
-main {
-  flex-grow: 1;
-  width: 100%;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.content-wrapper {
-  max-width: 95%;
-  margin: 0 auto;
-}
-
-.search-filter-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 10px 40px;
-  flex-wrap: wrap;
-}
-
 .course-title {
   font-size: 32px;
   font-weight: 600;
   color: #333;
   margin: 0;
-}
-
-.filter-group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
 }
 
 @media (max-width: 768px) {

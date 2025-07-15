@@ -134,8 +134,6 @@ export default function App() {
         <CourseDetail
           course={selectedCourse}
           onClose={() => setSelectedCourse(null)}
-          categories={categories}
-          subcategories={subcategories}
         />
       )}
       <ToastContainer position="top-right" autoClose={2000} />
