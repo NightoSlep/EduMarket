@@ -17,7 +17,6 @@ export default function LikedCourses({ externalSubcategoryId }) {
     priceRange,
     setPriceRange,
     disabledOptions,
-    subcategories,
     getSubcategoryName,
   } = useLikedCourses(externalSubcategoryId);
 
@@ -49,10 +48,7 @@ export default function LikedCourses({ externalSubcategoryId }) {
       {selectedCourse && (
         <CourseDetail
           course={selectedCourse}
-          isLoading={false}
           onClose={() => setSelectedCourse(null)}
-          categories={[]}
-          subcategories={subcategories}
         />
       )}
     </div>
