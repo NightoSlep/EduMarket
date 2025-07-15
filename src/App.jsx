@@ -24,6 +24,8 @@ export default function App() {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [likedSubcategoryId, setLikedSubcategoryId] = useState(null);
+  const [suggestedCourses, setSuggestedCourses] = useState(null);
+
 
   const { filteredCourses, loading } = useCourseFilter(
     searchTerm,
@@ -34,7 +36,7 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const currentCourses = filteredCourses.slice(
+  const currentCourses = (suggestedCourses ?? filteredCourses).slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -59,6 +61,7 @@ export default function App() {
   }, []);
 
   const getTitle = () => {
+    if (suggestedCourses) return "🎯 Gợi ý phù hợp với bạn";
     const category = categories.find(c => c.id === categoryFilter);
     const subcategory = subcategories.find(sc => sc.id === subcategoryFilter);
     if (category && subcategory) return `${category.name} - ${subcategory.name}`;
@@ -70,6 +73,7 @@ export default function App() {
     setCategoryFilter(categoryId);
     setSubcategoryFilter(subcategoryId);
     setLikedSubcategoryId(subcategoryId);
+    setSuggestedCourses(null);
     window.scrollTo(0, 0);
   };
 
@@ -79,6 +83,7 @@ export default function App() {
     setCategoryFilter(null);
     setSubcategoryFilter(null);
     setLikedSubcategoryId(null);
+    setSuggestedCourses(null);
     setCurrentPage(1);
     window.scrollTo(0, 0);
   };
@@ -90,8 +95,12 @@ export default function App() {
         onResetFilters={handleResetFilters}
         categories={categories}
         subcategories={subcategories}
+        onSuggestCourses={(courses) => {
+          setSuggestedCourses(courses);
+          setCurrentPage(1);
+          window.scrollTo(0, 0);
+        }}
       />
-
       <Routes>
         <Route
           path="/"
@@ -105,13 +114,11 @@ export default function App() {
                 setPriceRange={setPriceRange}
                 disabledOptions={disabledOptions}
               />
-
               <CourseList
                 courses={currentCourses}
                 isLoading={loading}
                 onSelectCourse={setSelectedCourse}
               />
-
               <Pagination
                 currentPage={currentPage}
                 totalPages={Math.ceil(filteredCourses.length / itemsPerPage)}
@@ -129,7 +136,6 @@ export default function App() {
         <Route path="/history" element={<WatchHistory />} />
         <Route path="/suggested" element={<SuggestedCourses />} />
       </Routes>
-
       {selectedCourse && (
         <CourseDetail
           course={selectedCourse}

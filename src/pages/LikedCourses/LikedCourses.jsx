@@ -3,7 +3,7 @@ import CourseList from '../../components/CourseList/CourseList';
 import CourseDetail from '../../components/CourseDetail/CourseDetail';
 import Pagination from '../../components/Pagination/Pagination';
 import FilterBar from '../../components/FilterBar/FilterBar';
-import useLikedCourses from '../../hooks/useLikedCourses';
+import useLikedCourse from '../../hooks/useLikedCourse';
 
 export default function LikedCourses({ externalSubcategoryId }) {
   const {
@@ -18,7 +18,7 @@ export default function LikedCourses({ externalSubcategoryId }) {
     setPriceRange,
     disabledOptions,
     getSubcategoryName,
-  } = useLikedCourses(externalSubcategoryId);
+  } = useLikedCourse(externalSubcategoryId);
 
   const [selectedCourse, setSelectedCourse] = useState(null);
 

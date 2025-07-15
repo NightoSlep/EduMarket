@@ -3,7 +3,7 @@ import { fetchCourses } from '../api/courses';
 import { fetchLikedCourses } from '../api/likedCourses';
 import { fetchSubcategories } from '../api/subcategories';
 
-export default function useLikedCourses(externalSubcategoryId) {
+export default function useLikedCourse(externalSubcategoryId) {
   const [likedCourses, setLikedCourses] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [loading, setLoading] = useState(true);

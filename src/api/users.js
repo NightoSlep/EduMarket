@@ -1,6 +1,6 @@
 import axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
-import usersData from '../mockData/users';
+import usersData from '../mockData/mockUsers';
 
 export const axiosInstance = axios.create();
 export const mock = new AxiosMockAdapter(axiosInstance, { delayResponse: 500 });

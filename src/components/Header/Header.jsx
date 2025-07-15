@@ -3,12 +3,15 @@ import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaLightbulb } from 'react-icons/fa';
 import { fetchCategories } from '../../api/categories';
+import { fetchLikedCourses } from '../../api/likedCourses';
+import { fetchWatchHistory } from '../../api/watchHistory';
+import { fetchCourses } from '../../api/courses';
 import useResponsiveMenu from '../../hooks/useResponsiveMenu';
 import CategoryMenu from '../CategoryMenu/CategoryMenu';
 import LoginModal from '../LoginModal/LoginModal';
 import './Header.css';
 
-export default function Header({ onCategorySelect }) {
+export default function Header({ onCategorySelect, onSuggestCourses  }) {
   const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -32,6 +35,37 @@ export default function Header({ onCategorySelect }) {
       console.error("Lỗi tải categories:", err);
     });
   }, []);
+
+  const handleSuggestClick = async () => {
+    if (!user) {
+      setShowLogin(true);
+      toast.info("Vui lòng đăng nhập để xem gợi ý cá nhân!");
+      return;
+    }
+    try {
+      const [history, liked, allCourses] = await Promise.all([
+        fetchWatchHistory(user.id),
+        fetchLikedCourses(user.id),
+        fetchCourses(),
+      ]);
+      const likedIds = liked.map(l => l.courseId);
+      const watchedIds = history.map(h => h.courseId);
+
+      const interactedCourseIds = [...new Set([...likedIds, ...watchedIds])];
+      const interactedCourses = allCourses.filter(c => interactedCourseIds.includes(c.id));
+      const relatedSubIds = [
+        ...new Set(interactedCourses.map(c => c.subcategoryId)),
+      ];
+      const suggestedCourses = allCourses.filter(course =>
+        relatedSubIds.includes(course.subcategoryId)
+      );
+      onSuggestCourses(suggestedCourses);
+      toast.success("🎯 Hiển thị gợi ý phù hợp với bạn!");
+    } catch (err) {
+      console.error("Lỗi khi tải gợi ý:", err);
+      toast.error("Lỗi khi tải gợi ý!");
+    }
+  };
 
   const handleLogoClick = () => {
     window.location.href = '/';
@@ -79,7 +113,7 @@ export default function Header({ onCategorySelect }) {
       <FaLightbulb
         className="lightbulb-icon desktop"
         title="Gợi ý thông minh!"
-        onClick={() => navigate("/suggested")} 
+        onClick={handleSuggestClick}
         style={{ cursor: 'pointer' }}
       />
     </>
@@ -172,10 +206,14 @@ export default function Header({ onCategorySelect }) {
             <div className="logo">Edu</div>
           </div>
           {isMobile && (
-            <FaLightbulb 
-              className="lightbulb-icon mobile" 
-              title="Gợi ý thông minh!" 
-              onClick={() => navigate("/suggested")} />
+            <div
+              className="menu-item lightbulb-wrapper"
+              onClick={handleSuggestClick}
+              title="Gợi ý thông minh!"
+            >
+              <FaLightbulb className="lightbulb-icon mobile" />
+              <span className="bulb-label">Gợi ý</span>
+            </div>
           )}
         </div>
 
