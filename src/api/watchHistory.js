@@ -2,14 +2,13 @@ import { axiosInstance, mock } from './axios';
 import watchHistoryData from '../mockData/watchHistory';
 
 let watchHistory = [...watchHistoryData];
-
 mock.onGet('/watch-history').reply(config => {
   const userId = parseInt(config.params?.userId);
   if (userId) {
+
     const history = watchHistory
       .filter(h => h.userId === userId)
       .sort((a, b) => new Date(b.watchedAt) - new Date(a.watchedAt));
-      console.log("mock.onget ",history);
     return [200, history];
   }
   return [400, { message: 'Thiếu userId' }];
@@ -27,11 +26,9 @@ mock.onPost('/watch-history').reply(config => {
 });
 
 export const fetchWatchHistory = async (userId) => {
-  console.log(typeof userId);
   const response = await axiosInstance.get('/watch-history', {
     params: { userId }
   });
-  console.log("response: " , response);
   return response.data;
 };
 

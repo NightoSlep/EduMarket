@@ -221,7 +221,7 @@ export default function CourseDetail({ course, onClose }) {
             </button>
           </div>
         </div>
-        <ToastContainer position="bottom-center" autoClose={2000} />
+        <ToastContainer position="top-center" autoClose={2000} />
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
 import "./LoginModal.css";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-
 import { loginUser } from "../../api/auth";
 
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
@@ -24,16 +25,20 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       localStorage.setItem("loggedInUser", JSON.stringify(user));
       localStorage.setItem("token", token);
       onLoginSuccess(user);
+      toast.success('✅ Đăng nhập thành công!');
       setEmail("");
       setPassword("");
       setError("");
-      onClose();
+      setTimeout(() => {
+        onClose();
+      }, 800);
     } catch (err) {
       setError(err.response?.data?.message || "Đăng nhập thất bại.");
     }
   };
 
-  return (
+return (
+  <>
     <div className="overlay">
       <div className="content" onClick={(e) => e.stopPropagation()}>
         <h2>Đăng nhập</h2>
@@ -67,5 +72,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
         </button>
       </div>
     </div>
-  );
+    <ToastContainer position="top-center" autoClose={2000} />
+  </>
+);
+
 }

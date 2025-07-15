@@ -1,0 +1,55 @@
+.watch-history-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeSlideUp 0.3s ease;
+}
+
+.skeleton-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 12px;
+  border-radius: 6px;
+  background-color: #f6f6f6;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-left {
+  flex-grow: 1;
+}
+
+.skeleton-title,
+.skeleton-category,
+.skeleton-time {
+  height: 16px;
+  border-radius: 4px;
+  background-color: #ddd;
+}
+
+.skeleton-title {
+  width: 180px;
+  height: 20px;
+  margin-bottom: 8px;
+}
+
+.skeleton-category {
+  width: 150px;
+}
+
+.skeleton-time {
+  width: 80px;
+  align-self: flex-start;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #eee;
+  }
+  50% {
+    background-color: #ddd;
+  }
+  100% {
+    background-color: #eee;
+  }
+}

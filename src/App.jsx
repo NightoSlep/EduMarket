@@ -1,4 +1,6 @@
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 import React, { useEffect, useState, useMemo } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { fetchCategories } from './api/categories';
@@ -11,6 +13,7 @@ import Pagination from './components/Pagination/Pagination';
 import useCourseFilter from './hooks/useCourseFilter';
 import WatchHistory from './pages/WatchHistory/WatchHistory';
 import LikedCourses from './pages/LikedCourses/LikedCourses';
+import SuggestedCourses from './pages/SuggestedCourses/SuggestedCourses';
 
 export default function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -124,6 +127,7 @@ export default function App() {
           }
         />
         <Route path="/history" element={<WatchHistory />} />
+        <Route path="/suggested" element={<SuggestedCourses />} />
       </Routes>
 
       {selectedCourse && (
@@ -134,6 +138,7 @@ export default function App() {
           subcategories={subcategories}
         />
       )}
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 }

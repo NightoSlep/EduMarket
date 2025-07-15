@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaLightbulb } from 'react-icons/fa';
 import { fetchCategories } from '../../api/categories';
@@ -43,10 +44,12 @@ export default function Header({ onCategorySelect }) {
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser");
     localStorage.removeItem("token");
+    localStorage.removeItem("watchHistory");
     setUser(null);
     setMenuOpen(false);
     setExpandedCategories([]);
     navigate('/');
+    toast.success("👋 Đăng xuất thành công!");
   };
 
   const renderDesktopNav = () => (
@@ -73,7 +76,12 @@ export default function Header({ onCategorySelect }) {
       >
         Lịch sử xem
       </Link>
-      <FaLightbulb className="lightbulb-icon desktop" title="Gợi ý thông minh!" />
+      <FaLightbulb
+        className="lightbulb-icon desktop"
+        title="Gợi ý thông minh!"
+        onClick={() => navigate("/suggested")} 
+        style={{ cursor: 'pointer' }}
+      />
     </>
   );
 
@@ -164,7 +172,10 @@ export default function Header({ onCategorySelect }) {
             <div className="logo">Edu</div>
           </div>
           {isMobile && (
-            <FaLightbulb className="lightbulb-icon mobile" title="Gợi ý thông minh!" />
+            <FaLightbulb 
+              className="lightbulb-icon mobile" 
+              title="Gợi ý thông minh!" 
+              onClick={() => navigate("/suggested")} />
           )}
         </div>
 

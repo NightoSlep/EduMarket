@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { fetchWatchHistory } from '../../api/watchHistory';
+import { fetchWatchHistory, addToWatchHistory } from '../../api/watchHistory';
 import { fetchCourses } from '../../api/courses';
 import { fetchCategories } from '../../api/categories';
 import { fetchSubcategories } from '../../api/subcategories';
-import { Link } from 'react-router-dom';
+import CourseDetail from '../../components/CourseDetail/CourseDetail';
+import Pagination from '../../components/Pagination/Pagination';
 import FilterBar from '../../components/FilterBar/FilterBar';
+import useWatchHistory from '../../hooks/useWatchHistory';
+import WatchHistorySkeleton from './WatchHistorySkeleton/WatchHistorySkeleton';
 import './WatchHistory.css';
 
 export default function WatchHistory() {
@@ -12,32 +15,76 @@ export default function WatchHistory() {
   const [courses, setCourses] = useState([]);
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const { saveWatchHistory, getWatchHistory } = useWatchHistory();
+  const user = useMemo(() => JSON.parse(localStorage.getItem('loggedInUser')), []);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('loggedInUser'));
     if (!user) {
       window.location.href = '/';
       return;
     }
 
-    Promise.all([
-      fetchWatchHistory(user.id),
-      fetchCourses(),
-      fetchSubcategories(),
-      fetchCategories(),
-    ])
-      .then(([historyData, allCourses, subcats, cats]) => {
+    const fetchData = async () => {
+      try {
+        const [apiHistory, allCourses, subcats, cats] = await Promise.all([
+          fetchWatchHistory(user.id),
+          fetchCourses(),
+          fetchSubcategories(),
+          fetchCategories(),
+        ]);
+
         setCourses(allCourses);
-        setCategories(cats);
         setSubcategories(subcats);
-        setHistory(historyData);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+        setCategories(cats);
+
+        const localHistory = getWatchHistory(user.id);
+
+        const merged = [
+          ...apiHistory,
+          ...localHistory.filter(
+            (lh) => !apiHistory.some((ah) => ah.courseId === lh.courseId)
+          ),
+        ].sort((a, b) => new Date(b.watchedAt) - new Date(a.watchedAt));
+
+        const enriched = merged.map((entry) => {
+          const course = allCourses.find((c) => c.id === entry.courseId);
+          const name = course?.name || `Khóa học #${entry.courseId}`;
+          const categoryName = course
+            ? cats.find((c) => c.id === course.categoryId)?.name
+            : 'Không rõ';
+          const subcategoryName = course
+            ? subcats.find((s) => s.id === course.subcategoryId)?.name
+            : '';
+          return {
+            ...entry,
+            ...(course || {}),
+            name,
+            categoryName,
+            subcategoryName,
+          };
+        });
+
+        setHistory(enriched);
+      } catch (err) {
+        console.error('Lỗi khi tải dữ liệu lịch sử:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [user, getWatchHistory]);
+
+  useEffect(() => {
+    const scrollTarget = document.querySelector('.watch-history-content');
+    if (scrollTarget) {
+      scrollTarget.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentPage]);
 
   const getCourseById = useCallback(
     (id) => courses.find((c) => c.id === id),
@@ -45,33 +92,12 @@ export default function WatchHistory() {
   );
 
   const filteredHistory = useMemo(() => {
-    return history
-      .map((entry) => {
-        const course = getCourseById(entry.courseId);
-        if (!course) return null;
-
-        const subcategoryName =
-          subcategories.find((s) => s.id === course.subcategoryId)?.name || '';
-
-        const categoryName =
-          categories.find((c) => c.id === course.categoryId)?.name || 'Không rõ';
-
-        return {
-          ...entry,
-          ...course,
-          subcategoryName,
-          categoryName,
-        };
-      })
-      .filter(
-        (item) =>
-          item &&
-          item.name &&
-          item.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-  }, [history, getCourseById, categories, subcategories, searchTerm]);
-
-  const totalFiltered = filteredHistory.length;
+    return history.filter(
+      (item) =>
+        item.name &&
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [history, searchTerm]);
 
   const pagedHistory = useMemo(() => {
     return filteredHistory.slice(
@@ -80,7 +106,40 @@ export default function WatchHistory() {
     );
   }, [filteredHistory, currentPage]);
 
-  const totalPages = Math.ceil(totalFiltered / itemsPerPage);
+  const totalPages = Math.ceil(filteredHistory.length / itemsPerPage);
+
+  const handleCourseClick = async (course) => {
+    if (!user || !course) return;
+
+    const newEntry = saveWatchHistory(user.id, course.id);
+    if (newEntry) {
+      try {
+        await addToWatchHistory(user.id, course.id);
+
+        const fullCourse = getCourseById(course.id);
+        const categoryName =
+          categories.find((c) => c.id === fullCourse?.categoryId)?.name || 'Không rõ';
+        const subcategoryName =
+          subcategories.find((s) => s.id === fullCourse?.subcategoryId)?.name || '';
+
+        const enriched = {
+          ...newEntry,
+          ...(fullCourse || {}),
+          name: fullCourse?.name || `Khóa học #${course.id}`,
+          categoryName,
+          subcategoryName,
+        };
+        setHistory((prev) => {
+          const filtered = prev.filter((item) => item.courseId !== course.id);
+          return [enriched, ...filtered];
+        });
+      } catch (err) {
+        console.error('Lỗi khi gửi lịch sử xem:', err);
+      }
+    }
+
+    setSelectedCourse(course);
+  };
 
   return (
     <div className="watch-history-page">
@@ -94,23 +153,39 @@ export default function WatchHistory() {
       <div className="watch-history-layout">
         <div className="watch-history-content">
           {loading ? (
-            <p>Đang tải...</p>
-          ) : totalFiltered === 0 ? (
+            <WatchHistorySkeleton count={6} />
+          ) : filteredHistory.length === 0 ? (
             <p>Không có khóa học nào.</p>
           ) : (
-            <div className="watch-history-scroll">
-              {pagedHistory.map((item, index) => (
-                <div key={index} className="history-card">
+            <div className="scroll-to-top-target">
+              {pagedHistory.map((item) => (
+                <div
+                  key={`${item.userId}-${item.courseId}-${item.watchedAt}`}
+                  className="history-card"
+                  onClick={() => handleCourseClick(item)}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div className="history-left">
-                    <Link to={`/courses/${item.courseId}`} className="course-name">
-                      {item.name}
-                    </Link>
+                    <div className="course-name">{item.name}</div>
                     <div className="category-info">
                       📂 Danh mục: {item.categoryName} - {item.subcategoryName}
                     </div>
                   </div>
                   <div className="watched-time">
-                    🕒 {new Date(item.watchedAt).toLocaleString()}
+                    🕒{' '}
+                    {(() => {
+                      const date = new Date(item.watchedAt);
+                      const timeStr = date.toLocaleTimeString('vi-VN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      });
+                      const dateStr = date.toLocaleDateString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                      });
+                      return `${timeStr}, ${dateStr}`;
+                    })()}
                   </div>
                 </div>
               ))}
@@ -119,18 +194,19 @@ export default function WatchHistory() {
         </div>
       </div>
 
-      {!loading && totalFiltered > 0 && (
-        <div className="pagination">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentPage(i + 1)}
-              className={currentPage === i + 1 ? 'active' : ''}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
+      {!loading && filteredHistory.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
+
+      {selectedCourse && (
+        <CourseDetail
+          course={selectedCourse}
+          onClose={() => setSelectedCourse(null)}
+        />
       )}
     </div>
   );

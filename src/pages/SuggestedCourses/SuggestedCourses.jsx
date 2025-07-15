@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchSuggestedCourses } from '../api/suggestions';
+import { fetchSuggestedCourses } from '../../api/suggestions';
 import { Link, useNavigate } from 'react-router-dom';
 import './SuggestedCourses.css';
 
