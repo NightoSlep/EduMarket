@@ -56,7 +56,7 @@ git clone https://github.com/NightoSlep/EduMarket.git
 
 # Navigate into the project directory
 ```
-cd edu-market
+cd EduMarket
 ```
 
 # Install dependencies
