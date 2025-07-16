@@ -1,49 +1,65 @@
-# EduMarket – Vite + React App
+# EduMarket
 
-## 🚀 How to Deploy the Project
+EduMarket is an AI-powered e-learning marketplace where users can discover, purchase, and manage online courses.
 
-This guide walks you through the installation, building, and deployment of this Vite + React app.
+## 🚀 Demo
 
----
+Check out the live demo: [https://edu-market-ivory.vercel.app/](https://edu-market-ivory.vercel.app/)
 
-### 📦 1. Install Dependencies
+![Demo Screenshot](./screenshots/homepage.png)
 
-In the root directory, run:
+## 🔐 Login Instructions
 
+To access the demo, you can use the following **mock login account**:
+
+- **Email:** a@example.com  
+- **Password:** 123
+
+## ✨ Features
+
+- Built with React + Vite for fast and modern frontend development
+
+- Clean and responsive UI
+
+- Simulated API calls using Axios with mock JSON data
+
+- Reusable and modular React components
+
+- Search, filter, and display course information from fake API
+
+- Shopping cart functionality with local state
+
+- Course recommendation UI ready for future AI integration
+
+## 🛠 Tech Stack
+
+- React
+- Vite
+- TailwindCSS
+- Axios
+- Mock data (JSON)
+- React Router DOM
+
+## 🔧 Installation
+
+To run the project locally:
+
+```
+git clone https://github.com/NightoSlep/EduMarket.git
+```
+
+# Navigate into the project directory
+```
+cd edu-market
+```
+
+# Install dependencies
 ```
 npm install
 ```
-
-### 🛠️ 2. Build the Project
-
-After installing dependencies, build the app with:
-
+# Start the development server
 ```
-npm run build
+npm run dev
 ```
 
-This will generate a dist/ folder containing the production-ready files.
 
-### 🌐 3. Deploy
-
-✅ Deploy to Vercel
-
-1. Log in with GitHub
-
-2. Import your repository
-
-3. Vercel will auto-detect Vite
-
-4. Click Deploy
-
-✅ Post-deploy Check
-
-After deployment, open your site in a browser.
-
-If you see a blank page:
-
-- Double-check the base path
-
-- Ensure routing is correctly handled (e.g., SPA fallback)
-
-- Open the browser console for 404 or loading errors

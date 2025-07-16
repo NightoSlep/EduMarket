@@ -2,31 +2,31 @@ const users = [
   {
     id: 1,
     name: "Nguyễn Văn A",
-    email: "a",
+    email: "a@example.com",
     password: "123",
   },
   {
     id: 2,
     name: "Trần Thị B",
-    email: "b",
+    email: "b@gmail.com",
     password: "123",
   },
   {
     id: 3,
     name: "Lê Văn C",
-    email: "c.le@example.com",
+    email: "ce@example.com",
     password: "123",
   },
   {
     id: 4,
     name: "Phạm Minh D",
-    email: "d.pham@example.com",
+    email: "dpham@example.com",
     password: "123",
   },
   {
     id: 5,
     name: "Hoàng Thị E",
-    email: "e.hoang@example.com",
+    email: "ehoang@example.com",
     password: "123",
   }
 ];
