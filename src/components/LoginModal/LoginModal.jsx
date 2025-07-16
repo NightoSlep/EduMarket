@@ -5,11 +5,13 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { loginUser } from "../../api/auth";
+import { useUser } from "../../hooks/useUser";
 
-export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
+export default function LoginModal({ isOpen, onClose }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); 
+  const { setUser } = useUser();
 
   if (!isOpen) return null;
 
@@ -24,7 +26,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       const { user, token } = await loginUser(email.trim(), password);
       localStorage.setItem("loggedInUser", JSON.stringify(user));
       localStorage.setItem("token", token);
-      onLoginSuccess(user);
+      setUser(user);
       toast.success('✅ Đăng nhập thành công!');
       setEmail("");
       setPassword("");

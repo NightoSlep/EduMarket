@@ -13,7 +13,7 @@ import Pagination from './components/Pagination/Pagination';
 import useCourseFilter from './hooks/useCourseFilter';
 import WatchHistory from './pages/WatchHistory/WatchHistory';
 import LikedCourses from './pages/LikedCourses/LikedCourses';
-import SuggestedCourses from './pages/SuggestedCourses/SuggestedCourses';
+import Cart from './pages/Cart/Cart';
 
 export default function App() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,7 +25,6 @@ export default function App() {
   const [subcategories, setSubcategories] = useState([]);
   const [likedSubcategoryId, setLikedSubcategoryId] = useState(null);
   const [suggestedCourses, setSuggestedCourses] = useState(null);
-
 
   const { filteredCourses, loading } = useCourseFilter(
     searchTerm,
@@ -121,7 +120,7 @@ export default function App() {
               />
               <Pagination
                 currentPage={currentPage}
-                totalPages={Math.ceil(filteredCourses.length / itemsPerPage)}
+                totalPages={Math.ceil(suggestedCourses ?? filteredCourses.length / itemsPerPage)}
                 onPageChange={setCurrentPage}
               />
             </>
@@ -134,7 +133,7 @@ export default function App() {
           }
         />
         <Route path="/history" element={<WatchHistory />} />
-        <Route path="/suggested" element={<SuggestedCourses />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
       {selectedCourse && (
         <CourseDetail

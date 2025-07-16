@@ -1,8 +1,10 @@
 import './Header.css';
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaLightbulb, FaShoppingCart } from 'react-icons/fa';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { fetchCategories } from '../../api/categories';
 import { fetchLikedCourses } from '../../api/likedCourses';
 import { fetchWatchHistory } from '../../api/watchHistory';
@@ -10,17 +12,16 @@ import { fetchCourses } from '../../api/courses';
 import useResponsiveMenu from '../../hooks/useResponsiveMenu';
 import CategoryMenu from '../CategoryMenu/CategoryMenu';
 import LoginModal from '../LoginModal/LoginModal';
-import useCart from '../../hooks/useCart';
+import { useCart } from "../../hooks/useCart";
+import { useUser } from "../../hooks/useUser";
 
-export default function Header({ onCategorySelect, onSuggestCourses  }) {
+export default function Header({ onCategorySelect, onSuggestCourses }) {
   const navigate = useNavigate();
   const [showLogin, setShowLogin] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("loggedInUser");
-    return stored ? JSON.parse(stored) : null;
-  });
-  const { cartItems } = useCart();
+  const { user, setUser } = useUser();
+  const { cartItems, clearCart, removeFromCart } = useCart();
+  const totalPrice = cartItems.reduce((sum, item) => sum + item.price, 0);
 
   const {
     isMobile,
@@ -52,15 +53,13 @@ export default function Header({ onCategorySelect, onSuggestCourses  }) {
       ]);
       const likedIds = liked.map(l => l.courseId);
       const watchedIds = history.map(h => h.courseId);
-
       const interactedCourseIds = [...new Set([...likedIds, ...watchedIds])];
       const interactedCourses = allCourses.filter(c => interactedCourseIds.includes(c.id));
-      const relatedSubIds = [
-        ...new Set(interactedCourses.map(c => c.subcategoryId)),
-      ];
+      const relatedSubIds = [...new Set(interactedCourses.map(c => c.subcategoryId))];
       const suggestedCourses = allCourses.filter(course =>
         relatedSubIds.includes(course.subcategoryId)
       );
+      navigate('/');
       onSuggestCourses(suggestedCourses);
       toast.success("🎯 Hiển thị gợi ý phù hợp với bạn!");
     } catch (err) {
@@ -73,20 +72,33 @@ export default function Header({ onCategorySelect, onSuggestCourses  }) {
     window.location.href = '/';
   };
 
-  const handleLoginSuccess = (userData) => {
-    setUser(userData);
-  };
-
   const handleLogout = () => {
-    localStorage.removeItem("loggedInUser");
-    localStorage.removeItem("token");
-    localStorage.removeItem("watchHistory");
-    localStorage.removeItem("cartItems");
+    clearCart();
     setUser(null);
     setMenuOpen(false);
     setExpandedCategories([]);
     navigate('/');
     toast.success("👋 Đăng xuất thành công!");
+  };
+
+  const handleLikedClick = (e) => {
+    if (!user) {
+      e.preventDefault();
+      alert("❗ Bạn cần đăng nhập để xem danh sách yêu thích!");
+    } else {
+      setMenuOpen(false);
+      setExpandedCategories([]);
+    }
+  };
+
+  const handleHistoryClick = (e) => {
+    if (!user) {
+      e.preventDefault();
+      alert("❗ Bạn cần đăng nhập để xem lịch sử!");
+    } else {
+      setMenuOpen(false);
+      setExpandedCategories([]);
+    }
   };
 
   const renderDesktopNav = () => (
@@ -181,26 +193,6 @@ export default function Header({ onCategorySelect, onSuggestCourses  }) {
     </>
   );
 
-  const handleLikedClick = (e) => {
-    if (!user) {
-      e.preventDefault();
-      alert("❗ Bạn cần đăng nhập để xem danh sách yêu thích!");
-    } else {
-      setMenuOpen(false);
-      setExpandedCategories([]);
-    }
-  };
-
-  const handleHistoryClick = (e) => {
-    if (!user) {
-      e.preventDefault();
-      alert("❗ Bạn cần đăng nhập để xem lịch sử!");
-    } else {
-      setMenuOpen(false);
-      setExpandedCategories([]);
-    }
-  };
-
   return (
     <header className="app-header">
       <div className="header-container">
@@ -222,11 +214,19 @@ export default function Header({ onCategorySelect, onSuggestCourses  }) {
 
         <div className="right-controls">
           {isMobile && user && (
-            <img
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6a0dad&color=fff&size=32`}
-              alt="avatar"
-              className="avatar mobile-avatar"
-            />
+            <>
+              <Link to="/cart" className="cart-icon mobile-cart" title="Giỏ hàng">
+                <FaShoppingCart />
+                {cartItems.length > 0 && (
+                  <span className="cart-badge">{cartItems.length}</span>
+                )}
+              </Link>
+              <img
+                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=6a0dad&color=fff&size=32`}
+                alt="avatar"
+                className="avatar mobile-avatar"
+              />
+            </>
           )}
           <button
             className="menu-toggle"
@@ -257,8 +257,42 @@ export default function Header({ onCategorySelect, onSuggestCourses  }) {
                       <span className="cart-badge">{cartItems.length}</span>
                     )}
                   </Link>
+
+                  {cartItems.length > 0 && (
+                    <div className="cart-dropdown">
+                      <div className="cart-dropdown-items">
+                        {cartItems.map((item) => (
+                          <div className="cart-dropdown-item" key={item.id}>
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="cart-dropdown-image"
+                            />
+                            <div className="cart-dropdown-info">
+                              <div className="cart-dropdown-name">{item.name}</div>
+                              <div className="cart-dropdown-price">
+                                {item.price.toLocaleString()} VND
+                              </div>
+                            </div>
+                            <button
+                              className="cart-dropdown-remove"
+                              onClick={() => removeFromCart(item.id)}
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="cart-dropdown-total">
+                        <span>Tổng cộng:</span>
+                        <strong>{totalPrice.toLocaleString()} VND</strong>
+                      </div>
+                      <Link to="/cart" className="cart-dropdown-view">Xem tất cả →</Link>
+                    </div>
+                  )}
                 </div>
               )}
+
               {user ? (
                 <div className="user-info desktop-dropdown">
                   <img
@@ -287,11 +321,7 @@ export default function Header({ onCategorySelect, onSuggestCourses  }) {
           )}
         </nav>
       </div>
-      <LoginModal
-        isOpen={showLogin}
-        onClose={() => setShowLogin(false)}
-        onLoginSuccess={handleLoginSuccess}
-      />
+      <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
     </header>
   );
 }

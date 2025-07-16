@@ -11,7 +11,6 @@ import useCourseDetail from '../../hooks/useCourseDetail';
 
 export default function CourseDetail({ course, onClose }) {
   const {
-
     isLiked,
     likes,
     reviews,
@@ -37,7 +36,7 @@ export default function CourseDetail({ course, onClose }) {
   if (isLoading) return <CourseDetailSkeleton />;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="detail-overlay" onClick={onClose}>
       <div className="course-modal" onClick={(e) => e.stopPropagation()}>
         <div className="close-wrapper">
           <button className="close-btn" onClick={onClose}>

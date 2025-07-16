@@ -3,7 +3,7 @@ import './CourseDetailSkeleton.css';
 
 export default function CourseDetailSkeleton() {
   return (
-    <div className="modal-overlay">
+    <div className="detail-overlay">
       <div className="course-modal">
         <div className="close-wrapper">
           <div className="skeleton-circle"></div>

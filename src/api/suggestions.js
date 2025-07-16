@@ -31,11 +31,9 @@ mock.onGet('/suggested-courses').reply(config => {
     !viewedOrLikedCourseIds.includes(course.id) &&
     subcategoryScores[course.subcategoryId]
   );
-
   const sortedSuggestions = suggestions.sort((a, b) =>
     (subcategoryScores[b.subcategoryId] || 0) - (subcategoryScores[a.subcategoryId] || 0)
   );
-
   return [200, sortedSuggestions.slice(0, 5)];
 });
 

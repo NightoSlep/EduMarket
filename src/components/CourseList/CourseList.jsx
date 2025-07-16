@@ -1,12 +1,13 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import CourseCard from '../CourseCard/CourseCard';
 import CourseCardSkeleton from '../CourseCard/CourseCardSkeleton/CourseCardSkeleton';
 import useWatchHistory from '../../hooks/useWatchHistory';
+import { useUser } from '../../hooks/useUser';
 import './CourseList.css';
 
 export default function CourseList({ courses, isLoading, onSelectCourse }) {
   const { saveWatchHistory } = useWatchHistory();
-  const user = useMemo(() => JSON.parse(localStorage.getItem('loggedInUser')), []);
+  const { user } = useUser();
 
   const handleSelectCourse = (course) => {
     if (!user || !course) return;
@@ -28,6 +29,7 @@ export default function CourseList({ courses, isLoading, onSelectCourse }) {
                 key={course.id}
                 course={course}
                 onSelectCourse={handleSelectCourse}
+                user={user}
               />
             ))}
       </div>
