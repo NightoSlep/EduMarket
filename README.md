@@ -12,8 +12,10 @@ Check out the live demo: [https://edu-market-ivory.vercel.app/](https://edu-mark
 
 To access the demo, you can use the following **mock login account**:
 
-- **Email:** a@example.com  
-- **Password:** 123
+- **Email:**
+- ```a@example.com  ```
+- **Password:**
+- ```123```
 
 ## ✨ Features
 
